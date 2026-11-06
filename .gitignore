@@ -24,3 +24,5 @@ depre
 .workbuddy/
 .Trash-0/
 interndataengine.zip
+__pycache__/
+*.py[cod]
