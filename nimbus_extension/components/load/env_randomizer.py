@@ -21,12 +21,14 @@ class EnvRandomizer(LayoutRandomizer):
             on the randomization process.
         input_dir (str): Directory from which to load additional randomization data such as object
             placements or textures. If None, randomization is performed without loading additional data.
+        max_retries (int): Extra retries per strict-mode target; -1 means unlimited.
     """
 
     def __init__(
-        self, scene_iter: Iterator[Scene], random_num: int = 1, strict_mode: bool = False, input_dir: str = None
+        self, scene_iter: Iterator[Scene], random_num: int = 1, strict_mode: bool = False, input_dir: str = None,
+        max_retries: int = -1,
     ):
-        super().__init__(scene_iter, random_num, strict_mode)
+        super().__init__(scene_iter, random_num, strict_mode, max_retries=max_retries)
         assert self.random_num > 0, "random_num must be greater than 0"
         self.input_dir = input_dir
         if self.input_dir is not None:

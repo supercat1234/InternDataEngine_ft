@@ -1,0 +1,6964 @@
+{
+  "source": "/home/agilex/qhx/InternDataEngine/output/cup_plate_desk/v0.6/BananaBaseTask/split_aloha/custom/pick_cup_to_plate_desk/desk_edge",
+  "checked_date_local": "2026-10-28",
+  "total_episodes": 10,
+  "total_frames": 4753,
+  "nominal_fps": 30,
+  "nominal_duration_s": 158.43333333333334,
+  "action_shape": [
+    7
+  ],
+  "state_shape": [
+    8
+  ],
+  "all_images_decoded": true,
+  "all_numeric_fields_finite": true,
+  "all_timeseries_lengths_match": true,
+  "unique_numeric_episodes": 10,
+  "action_translation_norm_m_quantiles": {
+    "min": 6.391725548837712e-08,
+    "p50": 0.001012273714877665,
+    "p95": 0.0063600423745810986,
+    "p99": 0.009875320158898816,
+    "max": 0.011802070774137974
+  },
+  "action_rotation_norm_rad_quantiles": {
+    "min": 7.765510900981099e-08,
+    "p50": 6.990065594436601e-05,
+    "p95": 0.01148792449384926,
+    "p99": 0.020453964844345945,
+    "max": 0.027748342603445053
+  },
+  "state_min": [
+    0.1756644994020462,
+    -0.21992237865924835,
+    0.13084055483341217,
+    0.47338762879371643,
+    0.39644768834114075,
+    0.25920727849006653,
+    0.3293180763721466,
+    0.6950675845146179
+  ],
+  "state_max": [
+    0.5643985867500305,
+    0.09355197846889496,
+    0.28229400515556335,
+    0.7387569546699524,
+    0.6663631796836853,
+    0.5254037380218506,
+    0.5215902924537659,
+    1.0
+  ],
+  "max_fk_position_error_m": 1.352177547484842e-05,
+  "max_fk_rotation_error_rad": 5.067492198731262e-05,
+  "max_reconstruction_error": 9.669155476288438e-10,
+  "timestamp_note": "No per-frame acquisition timestamps in raw arrays; nominal 30 Hz inferred from pipeline config.",
+  "tcp_config": {
+    "arm": "left",
+    "fps": 30,
+    "cameras": [
+      "external",
+      "hand_left",
+      "hand_right"
+    ],
+    "urdf": "/home/agilex/qhx/.interndata/curobo/src/curobo/content/assets/robot/piper100/piper100.urdf",
+    "base_link": "arm_base",
+    "ee_link": "link6",
+    "joint_names": [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6"
+    ],
+    "T_link6_tcp": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.12
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "tcp_calibration_status": "simulation_definition_only_not_real_robot_calibrated",
+    "gripper_max_width_m": 0.1,
+    "max_fk_position_error_m": 0.003,
+    "max_fk_rotation_error_rad": 0.005
+  },
+  "urdf_sha256": "6e314887523260d477c6c807843ce9603341d2b5b72ddb02aa6fcef59e7331e4",
+  "episodes": [
+    {
+      "episode": "2026-10-28_18_37_08_146340",
+      "frames": 441,
+      "nominal_seconds": 14.7,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            441,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            441,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            441,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            441,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            441,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            441,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            441,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            441,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            441,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            441,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            441,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            441,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            441
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            441
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            441,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            441,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            441,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            441,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            441
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            441
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            441,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            441,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            441,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            441,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            441,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            441,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            441,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            441,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            441,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 441,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 64,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 49,
+          "identical_frame_indices": [
+            3,
+            5,
+            7,
+            10,
+            13,
+            33,
+            35,
+            39,
+            44,
+            49,
+            51,
+            56,
+            59,
+            62,
+            65,
+            70,
+            73,
+            75,
+            83,
+            85,
+            87,
+            89,
+            91,
+            97,
+            101,
+            104,
+            107,
+            124,
+            129,
+            138,
+            143,
+            151,
+            153,
+            177,
+            182,
+            184,
+            188,
+            191,
+            194,
+            199,
+            207,
+            211,
+            238,
+            245,
+            248,
+            250,
+            253,
+            256,
+            261,
+            263,
+            266,
+            269,
+            271,
+            292,
+            317,
+            326,
+            340,
+            347,
+            352,
+            358,
+            364,
+            377,
+            381,
+            414
+          ],
+          "identical_frames_during_motion_indices": [
+            5,
+            7,
+            10,
+            13,
+            33,
+            35,
+            39,
+            44,
+            49,
+            51,
+            56,
+            59,
+            62,
+            65,
+            70,
+            73,
+            75,
+            83,
+            91,
+            97,
+            101,
+            104,
+            107,
+            129,
+            138,
+            143,
+            151,
+            153,
+            182,
+            184,
+            188,
+            191,
+            194,
+            199,
+            207,
+            211,
+            238,
+            245,
+            248,
+            250,
+            253,
+            256,
+            261,
+            263,
+            266,
+            269,
+            271,
+            317,
+            326
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.0076161121279457325
+        },
+        "hand_left": {
+          "decoded_frames": 441,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 65,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 49,
+          "identical_frame_indices": [
+            3,
+            5,
+            7,
+            10,
+            13,
+            33,
+            35,
+            39,
+            44,
+            49,
+            51,
+            56,
+            59,
+            62,
+            65,
+            70,
+            73,
+            75,
+            83,
+            85,
+            87,
+            89,
+            91,
+            97,
+            101,
+            104,
+            107,
+            124,
+            129,
+            138,
+            143,
+            151,
+            153,
+            172,
+            177,
+            182,
+            184,
+            188,
+            191,
+            194,
+            199,
+            207,
+            211,
+            238,
+            245,
+            248,
+            250,
+            253,
+            256,
+            261,
+            263,
+            266,
+            269,
+            271,
+            292,
+            317,
+            326,
+            340,
+            347,
+            352,
+            358,
+            364,
+            377,
+            381,
+            414
+          ],
+          "identical_frames_during_motion_indices": [
+            5,
+            7,
+            10,
+            13,
+            33,
+            35,
+            39,
+            44,
+            49,
+            51,
+            56,
+            59,
+            62,
+            65,
+            70,
+            73,
+            75,
+            83,
+            91,
+            97,
+            101,
+            104,
+            107,
+            129,
+            138,
+            143,
+            151,
+            153,
+            182,
+            184,
+            188,
+            191,
+            194,
+            199,
+            207,
+            211,
+            238,
+            245,
+            248,
+            250,
+            253,
+            256,
+            261,
+            263,
+            266,
+            269,
+            271,
+            317,
+            326
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.0076161121279457325
+        },
+        "hand_right": {
+          "decoded_frames": 441,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 65,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 49,
+          "identical_frame_indices": [
+            3,
+            5,
+            7,
+            10,
+            13,
+            33,
+            35,
+            39,
+            44,
+            49,
+            51,
+            56,
+            59,
+            62,
+            65,
+            70,
+            73,
+            75,
+            83,
+            85,
+            87,
+            89,
+            91,
+            97,
+            101,
+            104,
+            107,
+            124,
+            129,
+            138,
+            143,
+            151,
+            153,
+            172,
+            177,
+            182,
+            184,
+            188,
+            191,
+            194,
+            199,
+            207,
+            211,
+            238,
+            245,
+            248,
+            250,
+            253,
+            256,
+            261,
+            263,
+            266,
+            269,
+            271,
+            292,
+            317,
+            326,
+            340,
+            347,
+            352,
+            358,
+            364,
+            377,
+            381,
+            414
+          ],
+          "identical_frames_during_motion_indices": [
+            5,
+            7,
+            10,
+            13,
+            33,
+            35,
+            39,
+            44,
+            49,
+            51,
+            56,
+            59,
+            62,
+            65,
+            70,
+            73,
+            75,
+            83,
+            91,
+            97,
+            101,
+            104,
+            107,
+            129,
+            138,
+            143,
+            151,
+            153,
+            182,
+            184,
+            188,
+            191,
+            194,
+            199,
+            207,
+            211,
+            238,
+            245,
+            248,
+            250,
+            253,
+            256,
+            261,
+            263,
+            266,
+            269,
+            271,
+            317,
+            326
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.0076161121279457325
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.009790000505745411,
+      "max_action_rotation_rad": 0.02016608417034149,
+      "max_reconstruction_error": 9.669155476288438e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        109,
+        276
+      ],
+      "measured_gripper_width_range_m": [
+        0.07450046390295029,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.029746174812316895,
+      "max_actual_tcp_step_m": 0.009786289185285568,
+      "numeric_sha256": "e5ea1f15b8b127e56912310153fc1267e2b954a093a2e6d67d4b26a0c428722f",
+      "right_arm_max_joint_span_rad": 5.775002864538692e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.35436269640922546,
+          0.16871845722198486,
+          0.750291645526886
+        ],
+        [
+          -0.09875933825969696,
+          0.15833796560764313,
+          0.7576141357421875
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.09940735995769501,
+          0.15697473287582397,
+          0.75
+        ],
+        [
+          -0.0994073748588562,
+          0.15697477757930756,
+          0.7500000596046448
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.001509381690993905,
+      "cup_height_range_m": [
+        0.7502915263175964,
+        0.8491392135620117
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 1055.7707193831534,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 1.0557707193831534,
+          "color_mode": "white",
+          "temperature_kelvin": 6241.550499759833,
+          "rotation_deg": [
+            -2.5510814619652376,
+            -3.604620714748561,
+            -15.900192953139701
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_2",
+            "tone": "standard",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/wood2.jpg",
+            "scale": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "bias": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 255,
+          "tilt_deg": 30.00698602964854,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              -0.707107223800031,
+              -0.3535562273213348,
+              -0.612370286813556,
+              0.07654692621955095
+            ],
+            [
+              -0.7071063385397596,
+              0.35354829972036617,
+              0.6123758860060808,
+              -0.07654584302981793
+            ],
+            [
+              -6.83425666406774e-06,
+              0.8660263240151207,
+              -0.49999840606360973,
+              0.117500202991669
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_18_37_43_969504",
+      "frames": 525,
+      "nominal_seconds": 17.5,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            525,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            525,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            525,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            525,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            525,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            525,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            525,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            525,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            525,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            525,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            525,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            525,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            525
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            525
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            525,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            525,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            525,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            525,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            525
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            525
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            525,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            525,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            525,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            525,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            525,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            525,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            525,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            525,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            525,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 525,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 71,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 53,
+          "identical_frame_indices": [
+            2,
+            9,
+            20,
+            23,
+            28,
+            32,
+            43,
+            49,
+            59,
+            66,
+            77,
+            82,
+            90,
+            93,
+            106,
+            114,
+            120,
+            122,
+            139,
+            144,
+            154,
+            160,
+            162,
+            169,
+            172,
+            174,
+            176,
+            179,
+            182,
+            187,
+            190,
+            194,
+            206,
+            211,
+            215,
+            219,
+            222,
+            226,
+            230,
+            238,
+            241,
+            245,
+            254,
+            258,
+            265,
+            269,
+            271,
+            281,
+            287,
+            291,
+            301,
+            307,
+            326,
+            337,
+            339,
+            341,
+            360,
+            367,
+            372,
+            378,
+            386,
+            391,
+            396,
+            410,
+            418,
+            437,
+            445,
+            454,
+            459,
+            469,
+            506
+          ],
+          "identical_frames_during_motion_indices": [
+            23,
+            28,
+            32,
+            43,
+            49,
+            59,
+            66,
+            77,
+            82,
+            90,
+            93,
+            106,
+            114,
+            120,
+            122,
+            139,
+            144,
+            154,
+            160,
+            162,
+            169,
+            172,
+            174,
+            176,
+            179,
+            182,
+            187,
+            190,
+            194,
+            206,
+            211,
+            215,
+            219,
+            222,
+            226,
+            230,
+            238,
+            241,
+            245,
+            254,
+            258,
+            291,
+            301,
+            326,
+            337,
+            360,
+            367,
+            372,
+            378,
+            386,
+            391,
+            396,
+            418
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008225079260282939
+        },
+        "hand_left": {
+          "decoded_frames": 525,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 71,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 53,
+          "identical_frame_indices": [
+            2,
+            9,
+            20,
+            23,
+            28,
+            32,
+            43,
+            49,
+            59,
+            66,
+            77,
+            82,
+            90,
+            93,
+            106,
+            114,
+            120,
+            122,
+            139,
+            144,
+            154,
+            160,
+            162,
+            169,
+            172,
+            174,
+            176,
+            179,
+            182,
+            187,
+            190,
+            194,
+            206,
+            211,
+            215,
+            219,
+            222,
+            226,
+            230,
+            238,
+            241,
+            245,
+            254,
+            258,
+            265,
+            269,
+            271,
+            281,
+            287,
+            291,
+            301,
+            307,
+            326,
+            337,
+            339,
+            341,
+            360,
+            367,
+            372,
+            378,
+            386,
+            391,
+            396,
+            410,
+            418,
+            437,
+            445,
+            454,
+            459,
+            469,
+            506
+          ],
+          "identical_frames_during_motion_indices": [
+            23,
+            28,
+            32,
+            43,
+            49,
+            59,
+            66,
+            77,
+            82,
+            90,
+            93,
+            106,
+            114,
+            120,
+            122,
+            139,
+            144,
+            154,
+            160,
+            162,
+            169,
+            172,
+            174,
+            176,
+            179,
+            182,
+            187,
+            190,
+            194,
+            206,
+            211,
+            215,
+            219,
+            222,
+            226,
+            230,
+            238,
+            241,
+            245,
+            254,
+            258,
+            291,
+            301,
+            326,
+            337,
+            360,
+            367,
+            372,
+            378,
+            386,
+            391,
+            396,
+            418
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008225079260282939
+        },
+        "hand_right": {
+          "decoded_frames": 525,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 71,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 53,
+          "identical_frame_indices": [
+            2,
+            9,
+            20,
+            23,
+            28,
+            32,
+            43,
+            49,
+            59,
+            66,
+            77,
+            82,
+            90,
+            93,
+            106,
+            114,
+            120,
+            122,
+            139,
+            144,
+            154,
+            160,
+            162,
+            169,
+            172,
+            174,
+            176,
+            179,
+            182,
+            187,
+            190,
+            194,
+            206,
+            211,
+            215,
+            219,
+            222,
+            226,
+            230,
+            238,
+            241,
+            245,
+            254,
+            258,
+            265,
+            269,
+            271,
+            281,
+            287,
+            291,
+            301,
+            307,
+            326,
+            337,
+            339,
+            341,
+            360,
+            367,
+            372,
+            378,
+            386,
+            391,
+            396,
+            410,
+            418,
+            437,
+            445,
+            454,
+            459,
+            469,
+            506
+          ],
+          "identical_frames_during_motion_indices": [
+            23,
+            28,
+            32,
+            43,
+            49,
+            59,
+            66,
+            77,
+            82,
+            90,
+            93,
+            106,
+            114,
+            120,
+            122,
+            139,
+            144,
+            154,
+            160,
+            162,
+            169,
+            172,
+            174,
+            176,
+            179,
+            182,
+            187,
+            190,
+            194,
+            206,
+            211,
+            215,
+            219,
+            222,
+            226,
+            230,
+            238,
+            241,
+            245,
+            254,
+            258,
+            291,
+            301,
+            326,
+            337,
+            360,
+            367,
+            372,
+            378,
+            386,
+            391,
+            396,
+            418
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008225079260282939
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.011802070774137974,
+      "max_action_rotation_rad": 0.026469476521015167,
+      "max_reconstruction_error": 9.172474307872491e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        309,
+        396
+      ],
+      "measured_gripper_width_range_m": [
+        0.0723506361246109,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.02480175346136093,
+      "max_actual_tcp_step_m": 0.010528485290706158,
+      "numeric_sha256": "f3d7394f6410ab90ec76a13bbf198c18eeefccfdba3574db324c50f2912e5232",
+      "right_arm_max_joint_span_rad": 5.284705912345089e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.35582759976387024,
+          0.23226770758628845,
+          0.7502918243408203
+        ],
+        [
+          -0.08678530901670456,
+          0.17425227165222168,
+          0.7576532959938049
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.08657658845186234,
+          0.17437154054641724,
+          0.7500001192092896
+        ],
+        [
+          -0.08657657355070114,
+          0.17437142133712769,
+          0.7500000596046448
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.00024034795933403075,
+      "cup_height_range_m": [
+        0.7502915263175964,
+        0.8179989457130432
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 1036.197004979616,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 1.0361970049796159,
+          "color_mode": "white",
+          "temperature_kelvin": 5529.79721943807,
+          "rotation_deg": [
+            -2.8136202519639664,
+            0.053552881033623656,
+            -18.938561212645453
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "light",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              0.75,
+              0.75,
+              0.75,
+              1.0
+            ],
+            "bias": [
+              0.25,
+              0.25,
+              0.25,
+              0.0
+            ]
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 173,
+          "tilt_deg": 15.00037469145148,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              0.2588204838829487,
+              -0.24999777563627223,
+              -0.9330128987851735,
+              0.11662769551088392
+            ],
+            [
+              -0.9659254407593029,
+              -0.06698303399584088,
+              -0.2500026320874601,
+              0.03125014808410295
+            ],
+            [
+              4.067207193062004e-06,
+              0.9659266977020711,
+              -0.2588157928910631,
+              0.08735019809356889
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_18_38_20_689618",
+      "frames": 465,
+      "nominal_seconds": 15.5,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            465,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            465,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            465,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            465,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            465,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            465,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            465,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            465,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            465,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            465,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            465,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            465,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            465
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            465
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            465,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            465,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            465,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            465,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            465
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            465
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            465,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            465,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            465,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            465,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            465,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            465,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            465,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            465,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            465,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 465,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 57,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 31,
+          "identical_frame_indices": [
+            5,
+            7,
+            12,
+            16,
+            21,
+            28,
+            30,
+            33,
+            38,
+            41,
+            46,
+            51,
+            59,
+            63,
+            70,
+            80,
+            82,
+            85,
+            88,
+            97,
+            99,
+            104,
+            106,
+            109,
+            116,
+            131,
+            155,
+            167,
+            172,
+            175,
+            180,
+            183,
+            189,
+            211,
+            219,
+            226,
+            238,
+            250,
+            261,
+            272,
+            279,
+            295,
+            299,
+            323,
+            340,
+            352,
+            375,
+            379,
+            384,
+            386,
+            394,
+            396,
+            399,
+            403,
+            422,
+            433,
+            447
+          ],
+          "identical_frames_during_motion_indices": [
+            7,
+            12,
+            16,
+            21,
+            28,
+            30,
+            33,
+            38,
+            41,
+            46,
+            51,
+            59,
+            63,
+            70,
+            85,
+            88,
+            97,
+            99,
+            131,
+            167,
+            172,
+            175,
+            180,
+            183,
+            189,
+            238,
+            250,
+            261,
+            272,
+            323,
+            340
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.006093548799289571
+        },
+        "hand_left": {
+          "decoded_frames": 465,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 57,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 31,
+          "identical_frame_indices": [
+            5,
+            7,
+            12,
+            16,
+            21,
+            28,
+            30,
+            33,
+            38,
+            41,
+            46,
+            51,
+            59,
+            63,
+            70,
+            80,
+            82,
+            85,
+            88,
+            97,
+            99,
+            104,
+            106,
+            109,
+            116,
+            131,
+            155,
+            167,
+            172,
+            175,
+            180,
+            183,
+            189,
+            211,
+            219,
+            226,
+            238,
+            250,
+            261,
+            272,
+            279,
+            295,
+            299,
+            323,
+            340,
+            352,
+            375,
+            379,
+            384,
+            386,
+            394,
+            396,
+            399,
+            403,
+            422,
+            433,
+            447
+          ],
+          "identical_frames_during_motion_indices": [
+            7,
+            12,
+            16,
+            21,
+            28,
+            30,
+            33,
+            38,
+            41,
+            46,
+            51,
+            59,
+            63,
+            70,
+            85,
+            88,
+            97,
+            99,
+            131,
+            167,
+            172,
+            175,
+            180,
+            183,
+            189,
+            238,
+            250,
+            261,
+            272,
+            323,
+            340
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.006093548799289571
+        },
+        "hand_right": {
+          "decoded_frames": 465,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 57,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 31,
+          "identical_frame_indices": [
+            5,
+            7,
+            12,
+            16,
+            21,
+            28,
+            30,
+            33,
+            38,
+            41,
+            46,
+            51,
+            59,
+            63,
+            70,
+            80,
+            82,
+            85,
+            88,
+            97,
+            99,
+            104,
+            106,
+            109,
+            116,
+            131,
+            155,
+            167,
+            172,
+            175,
+            180,
+            183,
+            189,
+            211,
+            219,
+            226,
+            238,
+            250,
+            261,
+            272,
+            279,
+            295,
+            299,
+            323,
+            340,
+            352,
+            375,
+            379,
+            384,
+            386,
+            394,
+            396,
+            399,
+            403,
+            422,
+            433,
+            447
+          ],
+          "identical_frames_during_motion_indices": [
+            7,
+            12,
+            16,
+            21,
+            28,
+            30,
+            33,
+            38,
+            41,
+            46,
+            51,
+            59,
+            63,
+            70,
+            85,
+            88,
+            97,
+            99,
+            131,
+            167,
+            172,
+            175,
+            180,
+            183,
+            189,
+            238,
+            250,
+            261,
+            272,
+            323,
+            340
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.006093548799289571
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.007592745590955019,
+      "max_action_rotation_rad": 0.014292918145656586,
+      "max_reconstruction_error": 4.6086112703846993e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        102,
+        281
+      ],
+      "measured_gripper_width_range_m": [
+        0.06959346681833267,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.029780149459838867,
+      "max_actual_tcp_step_m": 0.007586628198623657,
+      "numeric_sha256": "b7eeb4c9f52445ca22c203fb1291929100efb7f35257d71bae289128cc55abfb",
+      "right_arm_max_joint_span_rad": 5.591542867477983e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.36914822459220886,
+          0.10820399224758148,
+          0.7502911686897278
+        ],
+        [
+          -0.0970645621418953,
+          0.176462322473526,
+          0.7576349973678589
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.09780474007129669,
+          0.17651505768299103,
+          0.7500001192092896
+        ],
+        [
+          -0.09780468046665192,
+          0.17651492357254028,
+          0.7500001192092896
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.000741985160857439,
+      "cup_height_range_m": [
+        0.7502911686897278,
+        0.8180859684944153
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 888.1762488162786,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 0.8881762488162787,
+          "color_mode": "warm",
+          "temperature_kelvin": 3809.4304566778264,
+          "rotation_deg": [
+            -4.93501240321939,
+            3.058192518328079,
+            7.925575799529074
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "standard",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "bias": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 32,
+          "tilt_deg": 24.995567140122166,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              0.49999816373551703,
+              0.36599919266412584,
+              0.7848862511410929,
+              -0.09810978152058714
+            ],
+            [
+              0.8660264639469433,
+              -0.21131095776064002,
+              -0.45315101552775316,
+              0.056645796977218305
+            ],
+            [
+              2.1596236961188455e-06,
+              0.9063069403350553,
+              -0.4226200774878626,
+              0.09782842544667833
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_18_38_55_537407",
+      "frames": 425,
+      "nominal_seconds": 14.166666666666666,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            425,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            425,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            425,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            425,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            425,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            425,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            425,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            425,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            425,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            425,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            425,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            425,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            425
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            425
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            425,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            425,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            425,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            425,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            425
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            425
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            425,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            425,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            425,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            425,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            425,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            425,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            425,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            425,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            425,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 425,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 35,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 20,
+          "identical_frame_indices": [
+            5,
+            10,
+            14,
+            18,
+            20,
+            24,
+            28,
+            30,
+            32,
+            36,
+            46,
+            56,
+            60,
+            73,
+            76,
+            86,
+            90,
+            95,
+            103,
+            107,
+            116,
+            121,
+            126,
+            136,
+            156,
+            159,
+            204,
+            277,
+            326,
+            338,
+            359,
+            379,
+            396,
+            412,
+            423
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            14,
+            18,
+            20,
+            24,
+            28,
+            30,
+            32,
+            36,
+            46,
+            56,
+            60,
+            73,
+            76,
+            90,
+            95,
+            103,
+            126,
+            136,
+            204
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.005727432533526368
+        },
+        "hand_left": {
+          "decoded_frames": 425,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 35,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 20,
+          "identical_frame_indices": [
+            5,
+            10,
+            14,
+            18,
+            20,
+            24,
+            28,
+            30,
+            32,
+            36,
+            46,
+            56,
+            60,
+            73,
+            76,
+            86,
+            90,
+            95,
+            103,
+            107,
+            116,
+            121,
+            126,
+            136,
+            156,
+            159,
+            204,
+            277,
+            326,
+            338,
+            359,
+            379,
+            396,
+            412,
+            423
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            14,
+            18,
+            20,
+            24,
+            28,
+            30,
+            32,
+            36,
+            46,
+            56,
+            60,
+            73,
+            76,
+            90,
+            95,
+            103,
+            126,
+            136,
+            204
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.005727432533526368
+        },
+        "hand_right": {
+          "decoded_frames": 425,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 35,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 20,
+          "identical_frame_indices": [
+            5,
+            10,
+            14,
+            18,
+            20,
+            24,
+            28,
+            30,
+            32,
+            36,
+            46,
+            56,
+            60,
+            73,
+            76,
+            86,
+            90,
+            95,
+            103,
+            107,
+            116,
+            121,
+            126,
+            136,
+            156,
+            159,
+            204,
+            277,
+            326,
+            338,
+            359,
+            379,
+            396,
+            412,
+            423
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            14,
+            18,
+            20,
+            24,
+            28,
+            30,
+            32,
+            36,
+            46,
+            56,
+            60,
+            73,
+            76,
+            90,
+            95,
+            103,
+            126,
+            136,
+            204
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.005727432533526368
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.006125372368842363,
+      "max_action_rotation_rad": 0.014252930879592896,
+      "max_reconstruction_error": 4.5737216791685853e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        106,
+        263
+      ],
+      "measured_gripper_width_range_m": [
+        0.0702793225646019,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.02989095449447632,
+      "max_actual_tcp_step_m": 0.006127168424427509,
+      "numeric_sha256": "0f56fad8ec7bf06c250ee14e94310bfe64b1cba300d347a1a6e399cbfc9b0e51",
+      "right_arm_max_joint_span_rad": 5.639605296892114e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.34029802680015564,
+          0.1354399472475052,
+          0.7502917647361755
+        ],
+        [
+          -0.11847145855426788,
+          0.17454123497009277,
+          0.757672905921936
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.11766982823610306,
+          0.17420385777950287,
+          0.7500001192092896
+        ],
+        [
+          -0.11766985058784485,
+          0.17420393228530884,
+          0.7500000596046448
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.0008696829318068922,
+      "cup_height_range_m": [
+        0.7502865791320801,
+        0.818016767501831
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 886.1255048430355,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 0.8861255048430355,
+          "color_mode": "warm",
+          "temperature_kelvin": 3102.210276519849,
+          "rotation_deg": [
+            -1.2007269936266263,
+            -1.410206195153716,
+            -6.241771100841156
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "standard",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "bias": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 68,
+          "tilt_deg": 25.003837016106576,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              -0.499996088981907,
+              -0.36598907779109535,
+              -0.7848922893877985,
+              0.09810966609919869
+            ],
+            [
+              -0.8660276617162541,
+              0.21131429371557534,
+              0.45314717081072436,
+              -0.056645698079706014
+            ],
+            [
+              1.2044626122722173e-05,
+              0.9063102472162115,
+              -0.4226129856568725,
+              0.09782718162312454
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_18_39_30_563407",
+      "frames": 436,
+      "nominal_seconds": 14.533333333333333,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            436,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            436,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            436,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            436,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            436,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            436,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            436,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            436,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            436,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            436,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            436,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            436,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            436
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            436
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            436,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            436,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            436,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            436,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            436
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            436
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            436,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            436,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            436,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            436,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            436,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            436,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            436,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            436,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            436,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 436,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 51,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 38,
+          "identical_frame_indices": [
+            4,
+            9,
+            16,
+            19,
+            30,
+            33,
+            51,
+            61,
+            66,
+            71,
+            77,
+            80,
+            87,
+            91,
+            93,
+            103,
+            111,
+            113,
+            120,
+            123,
+            145,
+            157,
+            160,
+            165,
+            180,
+            185,
+            203,
+            214,
+            220,
+            228,
+            231,
+            233,
+            239,
+            242,
+            253,
+            262,
+            269,
+            271,
+            277,
+            279,
+            282,
+            286,
+            299,
+            312,
+            333,
+            358,
+            370,
+            374,
+            389,
+            394,
+            403
+          ],
+          "identical_frames_during_motion_indices": [
+            9,
+            16,
+            19,
+            30,
+            33,
+            51,
+            61,
+            66,
+            71,
+            77,
+            80,
+            87,
+            91,
+            93,
+            103,
+            111,
+            113,
+            120,
+            123,
+            157,
+            160,
+            165,
+            180,
+            185,
+            220,
+            228,
+            231,
+            233,
+            239,
+            242,
+            253,
+            262,
+            269,
+            277,
+            279,
+            282,
+            286,
+            333
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008655770927271473
+        },
+        "hand_left": {
+          "decoded_frames": 436,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 52,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 39,
+          "identical_frame_indices": [
+            4,
+            9,
+            16,
+            19,
+            30,
+            33,
+            35,
+            51,
+            61,
+            66,
+            71,
+            77,
+            80,
+            87,
+            91,
+            93,
+            103,
+            111,
+            113,
+            120,
+            123,
+            145,
+            157,
+            160,
+            165,
+            180,
+            185,
+            203,
+            214,
+            220,
+            228,
+            231,
+            233,
+            239,
+            242,
+            253,
+            262,
+            269,
+            271,
+            277,
+            279,
+            282,
+            286,
+            299,
+            312,
+            333,
+            358,
+            370,
+            374,
+            389,
+            394,
+            403
+          ],
+          "identical_frames_during_motion_indices": [
+            9,
+            16,
+            19,
+            30,
+            33,
+            35,
+            51,
+            61,
+            66,
+            71,
+            77,
+            80,
+            87,
+            91,
+            93,
+            103,
+            111,
+            113,
+            120,
+            123,
+            157,
+            160,
+            165,
+            180,
+            185,
+            220,
+            228,
+            231,
+            233,
+            239,
+            242,
+            253,
+            262,
+            269,
+            277,
+            279,
+            282,
+            286,
+            333
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008655770927271473
+        },
+        "hand_right": {
+          "decoded_frames": 436,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 52,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 39,
+          "identical_frame_indices": [
+            4,
+            9,
+            16,
+            19,
+            30,
+            33,
+            35,
+            51,
+            61,
+            66,
+            71,
+            77,
+            80,
+            87,
+            91,
+            93,
+            103,
+            111,
+            113,
+            120,
+            123,
+            145,
+            157,
+            160,
+            165,
+            180,
+            185,
+            203,
+            214,
+            220,
+            228,
+            231,
+            233,
+            239,
+            242,
+            253,
+            262,
+            269,
+            271,
+            277,
+            279,
+            282,
+            286,
+            299,
+            312,
+            333,
+            358,
+            370,
+            374,
+            389,
+            394,
+            403
+          ],
+          "identical_frames_during_motion_indices": [
+            9,
+            16,
+            19,
+            30,
+            33,
+            35,
+            51,
+            61,
+            66,
+            71,
+            77,
+            80,
+            87,
+            91,
+            93,
+            103,
+            111,
+            113,
+            120,
+            123,
+            157,
+            160,
+            165,
+            180,
+            185,
+            220,
+            228,
+            231,
+            233,
+            239,
+            242,
+            253,
+            262,
+            269,
+            277,
+            279,
+            282,
+            286,
+            333
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008655770927271473
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.008625752292573452,
+      "max_action_rotation_rad": 0.007402707822620869,
+      "max_reconstruction_error": 3.86077975145227e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        130,
+        298
+      ],
+      "measured_gripper_width_range_m": [
+        0.06997515261173248,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.024823635816574097,
+      "max_actual_tcp_step_m": 0.008626717142760754,
+      "numeric_sha256": "969627ff532627887723b82683b11b71140e2a787fd979680b6996cde1a00d34",
+      "right_arm_max_joint_span_rad": 5.5400916608050466e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.39990535378456116,
+          0.2206006944179535,
+          0.7502918243408203
+        ],
+        [
+          -0.0922594740986824,
+          0.1589995175600052,
+          0.7576205730438232
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.09248671680688858,
+          0.157602459192276,
+          0.75
+        ],
+        [
+          -0.09248574078083038,
+          0.15758399665355682,
+          0.7500002384185791
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.00143349077552557,
+      "cup_height_range_m": [
+        0.7502914667129517,
+        0.817787766456604
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 1091.892714677527,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 1.091892714677527,
+          "color_mode": "white",
+          "temperature_kelvin": 6473.115763979371,
+          "rotation_deg": [
+            -1.214656227916465,
+            0.5204063127322698,
+            13.176186570119796
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "light",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              0.75,
+              0.75,
+              0.75,
+              1.0
+            ],
+            "bias": [
+              0.25,
+              0.25,
+              0.25,
+              0.0
+            ]
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 41,
+          "tilt_deg": 24.99869766748001,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              -0.25882944148922726,
+              0.4082154795889208,
+              0.8754241500223549,
+              -0.10942851621187066
+            ],
+            [
+              0.9659230405222091,
+              0.10938328756685688,
+              0.23458042584452163,
+              -0.029322728268578874
+            ],
+            [
+              2.5894934282345356e-06,
+              0.9063086773418063,
+              -0.4226163524619473,
+              0.09782756185850931
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_19_12_27_599303",
+      "frames": 387,
+      "nominal_seconds": 12.9,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            387,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            387,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            387,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            387,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            387,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            387,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            387,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            387,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            387,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            387,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            387,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            387,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            387
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            387
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            387,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            387,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            387,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            387,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            387
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            387
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            387,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            387,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            387,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            387,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            387,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            387,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            387,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            387,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            387,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 387,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 61,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 32,
+          "identical_frame_indices": [
+            10,
+            18,
+            24,
+            30,
+            38,
+            40,
+            46,
+            55,
+            60,
+            65,
+            72,
+            75,
+            81,
+            85,
+            87,
+            90,
+            96,
+            101,
+            104,
+            113,
+            115,
+            117,
+            125,
+            135,
+            157,
+            162,
+            164,
+            169,
+            174,
+            178,
+            181,
+            185,
+            187,
+            198,
+            201,
+            208,
+            237,
+            242,
+            251,
+            254,
+            265,
+            271,
+            274,
+            283,
+            291,
+            296,
+            298,
+            302,
+            305,
+            308,
+            311,
+            317,
+            319,
+            321,
+            325,
+            329,
+            340,
+            347,
+            351,
+            359,
+            371
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            18,
+            24,
+            30,
+            38,
+            40,
+            46,
+            55,
+            60,
+            65,
+            72,
+            75,
+            81,
+            85,
+            96,
+            101,
+            104,
+            135,
+            164,
+            169,
+            174,
+            178,
+            181,
+            185,
+            187,
+            198,
+            208,
+            254,
+            265,
+            271,
+            274,
+            283
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.00774958036571673
+        },
+        "hand_left": {
+          "decoded_frames": 387,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 61,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 32,
+          "identical_frame_indices": [
+            10,
+            18,
+            24,
+            30,
+            38,
+            40,
+            46,
+            55,
+            60,
+            65,
+            72,
+            75,
+            81,
+            85,
+            87,
+            90,
+            96,
+            101,
+            104,
+            113,
+            115,
+            117,
+            125,
+            135,
+            157,
+            162,
+            164,
+            169,
+            174,
+            178,
+            181,
+            185,
+            187,
+            198,
+            201,
+            208,
+            237,
+            242,
+            251,
+            254,
+            265,
+            271,
+            274,
+            283,
+            291,
+            296,
+            298,
+            302,
+            305,
+            308,
+            311,
+            317,
+            319,
+            321,
+            325,
+            329,
+            340,
+            347,
+            351,
+            359,
+            371
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            18,
+            24,
+            30,
+            38,
+            40,
+            46,
+            55,
+            60,
+            65,
+            72,
+            75,
+            81,
+            85,
+            96,
+            101,
+            104,
+            135,
+            164,
+            169,
+            174,
+            178,
+            181,
+            185,
+            187,
+            198,
+            208,
+            254,
+            265,
+            271,
+            274,
+            283
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.00774958036571673
+        },
+        "hand_right": {
+          "decoded_frames": 387,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 61,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 32,
+          "identical_frame_indices": [
+            10,
+            18,
+            24,
+            30,
+            38,
+            40,
+            46,
+            55,
+            60,
+            65,
+            72,
+            75,
+            81,
+            85,
+            87,
+            90,
+            96,
+            101,
+            104,
+            113,
+            115,
+            117,
+            125,
+            135,
+            157,
+            162,
+            164,
+            169,
+            174,
+            178,
+            181,
+            185,
+            187,
+            198,
+            201,
+            208,
+            237,
+            242,
+            251,
+            254,
+            265,
+            271,
+            274,
+            283,
+            291,
+            296,
+            298,
+            302,
+            305,
+            308,
+            311,
+            317,
+            319,
+            321,
+            325,
+            329,
+            340,
+            347,
+            351,
+            359,
+            371
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            18,
+            24,
+            30,
+            38,
+            40,
+            46,
+            55,
+            60,
+            65,
+            72,
+            75,
+            81,
+            85,
+            96,
+            101,
+            104,
+            135,
+            164,
+            169,
+            174,
+            178,
+            181,
+            185,
+            187,
+            198,
+            208,
+            254,
+            265,
+            271,
+            274,
+            283
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.00774958036571673
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.009989677928388119,
+      "max_action_rotation_rad": 0.020694617182016373,
+      "max_reconstruction_error": 9.07261321625441e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        111,
+        237
+      ],
+      "measured_gripper_width_range_m": [
+        0.06950675696134567,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.029722392559051514,
+      "max_actual_tcp_step_m": 0.009994498454034328,
+      "numeric_sha256": "ec9ac6ce745467b576454e5e11d9366ea595474d88e7211a5edc37c8d7da1909",
+      "right_arm_max_joint_span_rad": 5.72841709072236e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.35436365008354187,
+          0.1687171757221222,
+          0.7502915263175964
+        ],
+        [
+          -0.09998226910829544,
+          0.1558578461408615,
+          0.7576180100440979
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.09940743446350098,
+          0.15697462856769562,
+          0.7500001788139343
+        ],
+        [
+          -0.0994073897600174,
+          0.15697480738162994,
+          0.7500001192092896
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.0012562200427055359,
+      "cup_height_range_m": [
+        0.7502915263175964,
+        0.8180147409439087
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 1055.7707193831534,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 1.0557707193831534,
+          "color_mode": "white",
+          "temperature_kelvin": 6241.550499759833,
+          "rotation_deg": [
+            -2.5510814619652376,
+            -3.604620714748561,
+            -15.900192953139701
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "light",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              0.75,
+              0.75,
+              0.75,
+              1.0
+            ],
+            "bias": [
+              0.25,
+              0.25,
+              0.25,
+              0.0
+            ]
+          },
+          "floor": {
+            "name": "tile_4",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/materials/floor_tiles/tile_04.jpg"
+          }
+        },
+        "cameras": {
+          "split_aloha_external": {
+            "translation": [
+              -0.0017572006313185638,
+              -0.46859296154427943,
+              1.4279869512863343
+            ],
+            "orientation_wxyz": [
+              0.9575109027972811,
+              0.2883912597273557,
+              -0.0018309290413264007,
+              6.00417696341852e-06
+            ],
+            "translation_offset_m": [
+              -0.0017572006313185638,
+              0.011407038455720542,
+              -0.012013048713665611
+            ],
+            "rotation_angle_deg": -1.3179035052508339,
+            "rotation_frame": "parent",
+            "camera_axes": "usd"
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 20,
+          "tilt_deg": 25.006239462769898,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              0.9999999999391402,
+              -4.857118575197473e-06,
+              9.905908433015846e-06,
+              -1.4702488899329125e-06
+            ],
+            [
+              6.925115986568668e-06,
+              -0.4226160409179822,
+              -0.9063088225935202,
+              0.11328852375462678
+            ],
+            [
+              8.588445220702946e-06,
+              0.9063088226069623,
+              -0.42261604085862603,
+              0.0978252453961876
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_19_13_08_518177",
+      "frames": 554,
+      "nominal_seconds": 18.466666666666665,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            554,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            554,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            554,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            554,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            554,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            554,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            554,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            554,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            554,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            554,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            554,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            554,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            554
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            554
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            554,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            554,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            554,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            554,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            554
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            554
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            554,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            554,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            554,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            554,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            554,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            554,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            554,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            554,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            554,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 554,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 76,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 56,
+          "identical_frame_indices": [
+            18,
+            23,
+            31,
+            35,
+            40,
+            47,
+            52,
+            54,
+            61,
+            64,
+            68,
+            74,
+            80,
+            90,
+            95,
+            100,
+            104,
+            113,
+            118,
+            124,
+            139,
+            143,
+            149,
+            155,
+            162,
+            169,
+            175,
+            181,
+            184,
+            189,
+            198,
+            200,
+            222,
+            226,
+            231,
+            236,
+            239,
+            241,
+            258,
+            260,
+            272,
+            275,
+            277,
+            282,
+            287,
+            290,
+            292,
+            294,
+            302,
+            310,
+            312,
+            331,
+            339,
+            347,
+            355,
+            366,
+            371,
+            374,
+            390,
+            397,
+            402,
+            408,
+            428,
+            432,
+            452,
+            478,
+            483,
+            488,
+            501,
+            514,
+            517,
+            526,
+            533,
+            536,
+            541,
+            546
+          ],
+          "identical_frames_during_motion_indices": [
+            18,
+            23,
+            31,
+            35,
+            40,
+            47,
+            52,
+            54,
+            61,
+            64,
+            68,
+            74,
+            80,
+            95,
+            100,
+            104,
+            139,
+            143,
+            149,
+            162,
+            169,
+            175,
+            181,
+            184,
+            189,
+            198,
+            200,
+            222,
+            226,
+            231,
+            236,
+            239,
+            241,
+            258,
+            260,
+            272,
+            275,
+            277,
+            282,
+            287,
+            290,
+            292,
+            294,
+            302,
+            310,
+            312,
+            355,
+            366,
+            371,
+            374,
+            390,
+            397,
+            402,
+            408,
+            428,
+            432
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.0063185111840970065
+        },
+        "hand_left": {
+          "decoded_frames": 554,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 76,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 56,
+          "identical_frame_indices": [
+            18,
+            23,
+            31,
+            35,
+            40,
+            47,
+            52,
+            54,
+            61,
+            64,
+            68,
+            74,
+            80,
+            90,
+            95,
+            100,
+            104,
+            113,
+            118,
+            124,
+            139,
+            143,
+            149,
+            155,
+            162,
+            169,
+            175,
+            181,
+            184,
+            189,
+            198,
+            200,
+            222,
+            226,
+            231,
+            236,
+            239,
+            241,
+            258,
+            260,
+            272,
+            275,
+            277,
+            282,
+            287,
+            290,
+            292,
+            294,
+            302,
+            310,
+            312,
+            331,
+            339,
+            347,
+            355,
+            366,
+            371,
+            374,
+            390,
+            397,
+            402,
+            408,
+            428,
+            432,
+            452,
+            478,
+            483,
+            488,
+            501,
+            514,
+            517,
+            526,
+            533,
+            536,
+            541,
+            546
+          ],
+          "identical_frames_during_motion_indices": [
+            18,
+            23,
+            31,
+            35,
+            40,
+            47,
+            52,
+            54,
+            61,
+            64,
+            68,
+            74,
+            80,
+            95,
+            100,
+            104,
+            139,
+            143,
+            149,
+            162,
+            169,
+            175,
+            181,
+            184,
+            189,
+            198,
+            200,
+            222,
+            226,
+            231,
+            236,
+            239,
+            241,
+            258,
+            260,
+            272,
+            275,
+            277,
+            282,
+            287,
+            290,
+            292,
+            294,
+            302,
+            310,
+            312,
+            355,
+            366,
+            371,
+            374,
+            390,
+            397,
+            402,
+            408,
+            428,
+            432
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.0063185111840970065
+        },
+        "hand_right": {
+          "decoded_frames": 554,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 76,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 56,
+          "identical_frame_indices": [
+            18,
+            23,
+            31,
+            35,
+            40,
+            47,
+            52,
+            54,
+            61,
+            64,
+            68,
+            74,
+            80,
+            90,
+            95,
+            100,
+            104,
+            113,
+            118,
+            124,
+            139,
+            143,
+            149,
+            155,
+            162,
+            169,
+            175,
+            181,
+            184,
+            189,
+            198,
+            200,
+            222,
+            226,
+            231,
+            236,
+            239,
+            241,
+            258,
+            260,
+            272,
+            275,
+            277,
+            282,
+            287,
+            290,
+            292,
+            294,
+            302,
+            310,
+            312,
+            331,
+            339,
+            347,
+            355,
+            366,
+            371,
+            374,
+            390,
+            397,
+            402,
+            408,
+            428,
+            432,
+            452,
+            478,
+            483,
+            488,
+            501,
+            514,
+            517,
+            526,
+            533,
+            536,
+            541,
+            546
+          ],
+          "identical_frames_during_motion_indices": [
+            18,
+            23,
+            31,
+            35,
+            40,
+            47,
+            52,
+            54,
+            61,
+            64,
+            68,
+            74,
+            80,
+            95,
+            100,
+            104,
+            139,
+            143,
+            149,
+            162,
+            169,
+            175,
+            181,
+            184,
+            189,
+            198,
+            200,
+            222,
+            226,
+            231,
+            236,
+            239,
+            241,
+            258,
+            260,
+            272,
+            275,
+            277,
+            282,
+            287,
+            290,
+            292,
+            294,
+            302,
+            310,
+            312,
+            355,
+            366,
+            371,
+            374,
+            390,
+            397,
+            402,
+            408,
+            428,
+            432
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.0063185111840970065
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.006497356109321117,
+      "max_action_rotation_rad": 0.009641752578318119,
+      "max_reconstruction_error": 4.3724757148311255e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        110,
+        324
+      ],
+      "measured_gripper_width_range_m": [
+        0.07208336144685745,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.029969625174999237,
+      "max_actual_tcp_step_m": 0.0065052383579313755,
+      "numeric_sha256": "689fc5702adf7e23e441781c4857f723b5d647cd2e334dfd6899a1af7b8b3e0b",
+      "right_arm_max_joint_span_rad": 5.84527624596376e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.35969701409339905,
+          0.17124931514263153,
+          0.7502915263175964
+        ],
+        [
+          -0.12328749150037766,
+          0.19155937433242798,
+          0.7576533555984497
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.12303218245506287,
+          0.19174644351005554,
+          0.7500000596046448
+        ],
+        [
+          -0.12303218245506287,
+          0.19174647331237793,
+          0.7500001192092896
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.0003165260422974825,
+      "cup_height_range_m": [
+        0.7502914667129517,
+        0.8466348648071289
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 812.7130717927134,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 0.8127130717927135,
+          "color_mode": "white",
+          "temperature_kelvin": 5718.637974803603,
+          "rotation_deg": [
+            0.053552881033623656,
+            -4.734640303161363,
+            -12.04649397253406
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "standard",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "bias": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "floor": {
+            "name": "tile_3",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/materials/floor_tiles/tile_03.jpg"
+          }
+        },
+        "cameras": {
+          "split_aloha_external": {
+            "translation": [
+              -0.01313282856606786,
+              -0.48910770693922523,
+              1.4207356270618987
+            ],
+            "orientation_wxyz": [
+              0.9541934137222183,
+              0.29918448590591695,
+              -0.0015268004076912547,
+              0.001114218500534473
+            ],
+            "translation_offset_m": [
+              -0.01313282856606786,
+              -0.009107706939225243,
+              -0.01926437293810133
+            ],
+            "rotation_angle_deg": 0.21671201006317364,
+            "rotation_frame": "parent",
+            "camera_axes": "usd"
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 198,
+          "tilt_deg": 25.00717360829092,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              0.9659250674607841,
+              0.10938280924405124,
+              0.23457230248424163,
+              -0.029322846480777293
+            ],
+            [
+              0.2588218770710768,
+              -0.40821927841176053,
+              -0.8754246150768127,
+              0.109429351875168
+            ],
+            [
+              5.323770083317707e-07,
+              0.9063070240127574,
+              -0.4226198980465254,
+              0.10782697989342521
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_19_13_57_832682",
+      "frames": 688,
+      "nominal_seconds": 22.933333333333334,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            688,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            688,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            688,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            688,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            688,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            688,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            688,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            688,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            688,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            688,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            688,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            688,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            688
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            688
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            688,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            688,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            688,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            688,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            688
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            688
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            688,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            688,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            688,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            688,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            688,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            688,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            688,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            688,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            688,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 688,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 95,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 47,
+          "identical_frame_indices": [
+            5,
+            10,
+            12,
+            15,
+            18,
+            28,
+            30,
+            33,
+            37,
+            44,
+            48,
+            50,
+            52,
+            56,
+            61,
+            64,
+            68,
+            70,
+            74,
+            78,
+            83,
+            93,
+            95,
+            106,
+            110,
+            117,
+            119,
+            144,
+            166,
+            180,
+            189,
+            192,
+            196,
+            213,
+            236,
+            246,
+            256,
+            262,
+            272,
+            275,
+            281,
+            293,
+            318,
+            328,
+            333,
+            343,
+            358,
+            363,
+            376,
+            386,
+            394,
+            407,
+            413,
+            419,
+            426,
+            440,
+            452,
+            455,
+            460,
+            462,
+            464,
+            468,
+            473,
+            477,
+            492,
+            495,
+            501,
+            508,
+            535,
+            541,
+            546,
+            549,
+            554,
+            561,
+            576,
+            579,
+            581,
+            583,
+            585,
+            590,
+            601,
+            603,
+            608,
+            610,
+            619,
+            622,
+            633,
+            644,
+            651,
+            653,
+            657,
+            659,
+            664,
+            678,
+            681
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            12,
+            15,
+            18,
+            28,
+            30,
+            33,
+            37,
+            44,
+            48,
+            50,
+            52,
+            56,
+            61,
+            64,
+            68,
+            70,
+            74,
+            93,
+            95,
+            119,
+            166,
+            180,
+            189,
+            192,
+            196,
+            213,
+            236,
+            246,
+            256,
+            262,
+            272,
+            275,
+            281,
+            363,
+            376,
+            386,
+            394,
+            407,
+            413,
+            419,
+            477,
+            492,
+            495,
+            501,
+            508,
+            535
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.005703469249418693
+        },
+        "hand_left": {
+          "decoded_frames": 688,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 97,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 49,
+          "identical_frame_indices": [
+            5,
+            10,
+            12,
+            15,
+            18,
+            28,
+            30,
+            33,
+            37,
+            44,
+            48,
+            50,
+            52,
+            56,
+            61,
+            64,
+            68,
+            70,
+            74,
+            76,
+            78,
+            83,
+            93,
+            95,
+            106,
+            110,
+            117,
+            119,
+            144,
+            166,
+            180,
+            189,
+            192,
+            196,
+            213,
+            236,
+            246,
+            256,
+            262,
+            272,
+            275,
+            281,
+            293,
+            318,
+            328,
+            333,
+            343,
+            358,
+            363,
+            376,
+            386,
+            394,
+            407,
+            413,
+            415,
+            419,
+            426,
+            440,
+            452,
+            455,
+            460,
+            462,
+            464,
+            468,
+            473,
+            477,
+            492,
+            495,
+            501,
+            508,
+            535,
+            541,
+            546,
+            549,
+            554,
+            561,
+            576,
+            579,
+            581,
+            583,
+            585,
+            590,
+            601,
+            603,
+            608,
+            610,
+            619,
+            622,
+            633,
+            644,
+            651,
+            653,
+            657,
+            659,
+            664,
+            678,
+            681
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            12,
+            15,
+            18,
+            28,
+            30,
+            33,
+            37,
+            44,
+            48,
+            50,
+            52,
+            56,
+            61,
+            64,
+            68,
+            70,
+            74,
+            76,
+            93,
+            95,
+            119,
+            166,
+            180,
+            189,
+            192,
+            196,
+            213,
+            236,
+            246,
+            256,
+            262,
+            272,
+            275,
+            281,
+            363,
+            376,
+            386,
+            394,
+            407,
+            413,
+            415,
+            419,
+            477,
+            492,
+            495,
+            501,
+            508,
+            535
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.005703469249418693
+        },
+        "hand_right": {
+          "decoded_frames": 688,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 96,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 48,
+          "identical_frame_indices": [
+            5,
+            10,
+            12,
+            15,
+            18,
+            28,
+            30,
+            33,
+            37,
+            44,
+            48,
+            50,
+            52,
+            56,
+            61,
+            64,
+            68,
+            70,
+            74,
+            78,
+            83,
+            93,
+            95,
+            106,
+            110,
+            117,
+            119,
+            144,
+            166,
+            180,
+            189,
+            192,
+            196,
+            213,
+            236,
+            246,
+            256,
+            262,
+            272,
+            275,
+            281,
+            293,
+            318,
+            328,
+            333,
+            343,
+            358,
+            363,
+            376,
+            386,
+            394,
+            407,
+            413,
+            415,
+            419,
+            426,
+            440,
+            452,
+            455,
+            460,
+            462,
+            464,
+            468,
+            473,
+            477,
+            492,
+            495,
+            501,
+            508,
+            535,
+            541,
+            546,
+            549,
+            554,
+            561,
+            576,
+            579,
+            581,
+            583,
+            585,
+            590,
+            601,
+            603,
+            608,
+            610,
+            619,
+            622,
+            633,
+            644,
+            651,
+            653,
+            657,
+            659,
+            664,
+            678,
+            681
+          ],
+          "identical_frames_during_motion_indices": [
+            10,
+            12,
+            15,
+            18,
+            28,
+            30,
+            33,
+            37,
+            44,
+            48,
+            50,
+            52,
+            56,
+            61,
+            64,
+            68,
+            70,
+            74,
+            93,
+            95,
+            119,
+            166,
+            180,
+            189,
+            192,
+            196,
+            213,
+            236,
+            246,
+            256,
+            262,
+            272,
+            275,
+            281,
+            363,
+            376,
+            386,
+            394,
+            407,
+            413,
+            415,
+            419,
+            477,
+            492,
+            495,
+            501,
+            508,
+            535
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.005703469249418693
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.005753913428634405,
+      "max_action_rotation_rad": 0.010884081944823265,
+      "max_reconstruction_error": 4.5958814531843473e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        103,
+        441
+      ],
+      "measured_gripper_width_range_m": [
+        0.07321710139513016,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.029652953147888184,
+      "max_actual_tcp_step_m": 0.005753921810537577,
+      "numeric_sha256": "35120dd05fc62ec141f31ee47703208a0f2bcb3dddf9770e7ffb0a22a9b9881e",
+      "right_arm_max_joint_span_rad": 5.529842746909708e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.2607923746109009,
+          0.12369503080844879,
+          0.7502914667129517
+        ],
+        [
+          -0.10829515010118484,
+          0.18059001863002777,
+          0.7576749324798584
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.10802965611219406,
+          0.180647075176239,
+          0.7500001192092896
+        ],
+        [
+          -0.1080298200249672,
+          0.18064679205417633,
+          0.7500001192092896
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.0002713360881898552,
+      "cup_height_range_m": [
+        0.7502909898757935,
+        0.8179908394813538
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 979.6836185135414,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 0.9796836185135415,
+          "color_mode": "warm",
+          "temperature_kelvin": 3809.4304566778264,
+          "rotation_deg": [
+            -4.93501240321939,
+            3.058192518328079,
+            7.925575799529074
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "light",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              0.75,
+              0.75,
+              0.75,
+              1.0
+            ],
+            "bias": [
+              0.25,
+              0.25,
+              0.25,
+              0.0
+            ]
+          },
+          "floor": {
+            "name": "black_marble",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/materials/floor_tiles/black_marble.png"
+          }
+        },
+        "cameras": {
+          "split_aloha_external": {
+            "translation": [
+              -0.015139944947963278,
+              -0.49210118040560247,
+              1.4554769960083707
+            ],
+            "orientation_wxyz": [
+              0.9570469101620458,
+              0.28984730522529434,
+              0.007052369401183802,
+              0.00012445378851681443
+            ],
+            "translation_offset_m": [
+              -0.015139944947963278,
+              -0.012101180405602508,
+              0.01547699600837078
+            ],
+            "rotation_angle_deg": 1.3860573547611121,
+            "rotation_frame": "parent",
+            "camera_axes": "usd"
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 178,
+          "tilt_deg": 25.002055144946866,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              0.4999910614978733,
+              -0.36600651459004613,
+              -0.7848873611543741,
+              0.09810995096722275
+            ],
+            [
+              -0.8660305643595261,
+              -0.2113045638153118,
+              -0.4531461606434962,
+              0.0566461213613835
+            ],
+            [
+              4.165364110985379e-06,
+              0.9063054742130093,
+              -0.42262322155104365,
+              0.10782817662615356
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_19_14_37_742504",
+      "frames": 471,
+      "nominal_seconds": 15.7,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            471,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            471,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            471,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            471,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            471,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            471,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            471,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            471,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            471,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            471,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            471,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            471,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            471
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            471
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            471,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            471,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            471,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            471,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            471
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            471
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            471,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            471,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            471,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            471,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            471,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            471,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            471,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            471,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            471,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 471,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 52,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 31,
+          "identical_frame_indices": [
+            6,
+            9,
+            14,
+            19,
+            21,
+            34,
+            40,
+            42,
+            45,
+            50,
+            60,
+            68,
+            71,
+            82,
+            87,
+            90,
+            92,
+            105,
+            111,
+            128,
+            133,
+            148,
+            173,
+            176,
+            179,
+            188,
+            218,
+            220,
+            255,
+            274,
+            283,
+            288,
+            292,
+            298,
+            302,
+            308,
+            317,
+            326,
+            340,
+            342,
+            361,
+            365,
+            376,
+            378,
+            384,
+            391,
+            406,
+            409,
+            426,
+            436,
+            440,
+            451
+          ],
+          "identical_frames_during_motion_indices": [
+            6,
+            9,
+            14,
+            19,
+            21,
+            34,
+            40,
+            42,
+            45,
+            50,
+            60,
+            68,
+            71,
+            82,
+            87,
+            105,
+            111,
+            133,
+            148,
+            179,
+            188,
+            255,
+            274,
+            302,
+            308,
+            317,
+            326,
+            340,
+            342,
+            361,
+            365
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.006455832236788615
+        },
+        "hand_left": {
+          "decoded_frames": 471,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 52,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 31,
+          "identical_frame_indices": [
+            6,
+            9,
+            14,
+            19,
+            21,
+            34,
+            40,
+            42,
+            45,
+            50,
+            60,
+            68,
+            71,
+            82,
+            87,
+            90,
+            92,
+            105,
+            111,
+            128,
+            133,
+            148,
+            173,
+            176,
+            179,
+            188,
+            218,
+            220,
+            255,
+            274,
+            283,
+            288,
+            292,
+            298,
+            302,
+            308,
+            317,
+            326,
+            340,
+            342,
+            361,
+            365,
+            376,
+            378,
+            384,
+            391,
+            406,
+            409,
+            426,
+            436,
+            440,
+            451
+          ],
+          "identical_frames_during_motion_indices": [
+            6,
+            9,
+            14,
+            19,
+            21,
+            34,
+            40,
+            42,
+            45,
+            50,
+            60,
+            68,
+            71,
+            82,
+            87,
+            105,
+            111,
+            133,
+            148,
+            179,
+            188,
+            255,
+            274,
+            302,
+            308,
+            317,
+            326,
+            340,
+            342,
+            361,
+            365
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.006455832236788615
+        },
+        "hand_right": {
+          "decoded_frames": 471,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 52,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 31,
+          "identical_frame_indices": [
+            6,
+            9,
+            14,
+            19,
+            21,
+            34,
+            40,
+            42,
+            45,
+            50,
+            60,
+            68,
+            71,
+            82,
+            87,
+            90,
+            92,
+            105,
+            111,
+            128,
+            133,
+            148,
+            173,
+            176,
+            179,
+            188,
+            218,
+            220,
+            255,
+            274,
+            283,
+            288,
+            292,
+            298,
+            302,
+            308,
+            317,
+            326,
+            340,
+            342,
+            361,
+            365,
+            376,
+            378,
+            384,
+            391,
+            406,
+            409,
+            426,
+            436,
+            440,
+            451
+          ],
+          "identical_frames_during_motion_indices": [
+            6,
+            9,
+            14,
+            19,
+            21,
+            34,
+            40,
+            42,
+            45,
+            50,
+            60,
+            68,
+            71,
+            82,
+            87,
+            105,
+            111,
+            133,
+            148,
+            179,
+            188,
+            255,
+            274,
+            302,
+            308,
+            317,
+            326,
+            340,
+            342,
+            361,
+            365
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.006455832236788615
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.009356208145618439,
+      "max_action_rotation_rad": 0.01891152374446392,
+      "max_reconstruction_error": 9.040572596097363e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        113,
+        284
+      ],
+      "measured_gripper_width_range_m": [
+        0.07309620827436447,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.029765963554382324,
+      "max_actual_tcp_step_m": 0.009346423670649529,
+      "numeric_sha256": "4a1c77d9eda200cbcab3387a93a9fed1b3289984e6cf4358eb01251172cd38d5",
+      "right_arm_max_joint_span_rad": 5.558293196372688e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.34177765250205994,
+          0.19112254679203033,
+          0.750291645526886
+        ],
+        [
+          -0.08253242075443268,
+          0.1629190891981125,
+          0.7577375173568726
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.08412566781044006,
+          0.16452522575855255,
+          0.7500000596046448
+        ],
+        [
+          -0.08412565290927887,
+          0.16452518105506897,
+          0.7500000596046448
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.0022622819524258375,
+      "cup_height_range_m": [
+        0.7502914667129517,
+        0.8181673288345337
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 840.8841106079395,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 0.8408841106079395,
+          "color_mode": "warm",
+          "temperature_kelvin": 3096.716376833464,
+          "rotation_deg": [
+            3.4749436634745976,
+            1.0372603136689111,
+            12.285130930975207
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "light",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              0.75,
+              0.75,
+              0.75,
+              1.0
+            ],
+            "bias": [
+              0.25,
+              0.25,
+              0.25,
+              0.0
+            ]
+          },
+          "floor": {
+            "name": "tile_4",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/materials/floor_tiles/tile_04.jpg"
+          }
+        },
+        "cameras": {
+          "split_aloha_external": {
+            "translation": [
+              0.0083088540107011,
+              -0.49751187095341187,
+              1.4258921217711586
+            ],
+            "orientation_wxyz": [
+              0.9506124581920374,
+              0.3101818245386323,
+              -0.010954154461078142,
+              0.0017878915011872386
+            ],
+            "translation_offset_m": [
+              0.0083088540107011,
+              -0.01751187095341189,
+              -0.014107878228841186
+            ],
+            "rotation_angle_deg": 1.8317364842270818,
+            "rotation_frame": "parent",
+            "camera_axes": "usd"
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 190,
+          "tilt_deg": 25.00488466684708,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              0.9659245355241607,
+              -0.10937535236244462,
+              -0.2345779699119768,
+              0.029321247054716115
+            ],
+            [
+              -0.25882386205961827,
+              -0.40822141675151913,
+              -0.8754230310735066,
+              0.10942999363415207
+            ],
+            [
+              -1.0048726298290725e-05,
+              0.906306960803553,
+              -0.4226200334793057,
+              0.10782663062837557
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "episode": "2026-10-28_19_15_10_029904",
+      "frames": 361,
+      "nominal_seconds": 12.033333333333333,
+      "language_instruction": "Pick up the paper cup and put it on the plate.",
+      "array_fields": {
+        "states.left_joint.position": {
+          "shape": [
+            361,
+            6
+          ],
+          "finite": true
+        },
+        "states.left_gripper.position": {
+          "shape": [
+            361,
+            1
+          ],
+          "finite": true
+        },
+        "qvel": {
+          "shape": [
+            361,
+            28
+          ],
+          "finite": true
+        },
+        "T_base_ee_fl": {
+          "shape": [
+            361,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "T_world_base": {
+          "shape": [
+            361,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "states.right_joint.position": {
+          "shape": [
+            361,
+            6
+          ],
+          "finite": true
+        },
+        "states.right_gripper.position": {
+          "shape": [
+            361,
+            1
+          ],
+          "finite": true
+        },
+        "T_base_ee_fr": {
+          "shape": [
+            361,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "master_actions.left_joint.position": {
+          "shape": [
+            361,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.right_joint.position": {
+          "shape": [
+            361,
+            6
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.position": {
+          "shape": [
+            361,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.position": {
+          "shape": [
+            361,
+            1
+          ],
+          "finite": true
+        },
+        "master_actions.left_gripper.openness": {
+          "shape": [
+            361
+          ],
+          "finite": true
+        },
+        "master_actions.right_gripper.openness": {
+          "shape": [
+            361
+          ],
+          "finite": true
+        },
+        "actions.left_joint.position": {
+          "shape": [
+            361,
+            6
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.position": {
+          "shape": [
+            361,
+            1
+          ],
+          "finite": true
+        },
+        "actions.right_joint.position": {
+          "shape": [
+            361,
+            6
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.position": {
+          "shape": [
+            361,
+            1
+          ],
+          "finite": true
+        },
+        "actions.left_gripper.openness": {
+          "shape": [
+            361
+          ],
+          "finite": true
+        },
+        "actions.right_gripper.openness": {
+          "shape": [
+            361
+          ],
+          "finite": true
+        },
+        "paper_cup/translation": {
+          "shape": [
+            361,
+            3
+          ],
+          "finite": true
+        },
+        "paper_cup/orientation": {
+          "shape": [
+            361,
+            4
+          ],
+          "finite": true
+        },
+        "paper_cup/scale": {
+          "shape": [
+            361,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/translation": {
+          "shape": [
+            361,
+            3
+          ],
+          "finite": true
+        },
+        "ceramic_plate/orientation": {
+          "shape": [
+            361,
+            4
+          ],
+          "finite": true
+        },
+        "ceramic_plate/scale": {
+          "shape": [
+            361,
+            3
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_left": {
+          "shape": [
+            361,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.hand_right": {
+          "shape": [
+            361,
+            4,
+            4
+          ],
+          "finite": true
+        },
+        "camera2env_pose.external": {
+          "shape": [
+            361,
+            4,
+            4
+          ],
+          "finite": true
+        }
+      },
+      "cameras": {
+        "external": {
+          "decoded_frames": 361,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 33,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 18,
+          "identical_frame_indices": [
+            11,
+            24,
+            35,
+            49,
+            56,
+            62,
+            66,
+            83,
+            88,
+            95,
+            99,
+            103,
+            105,
+            109,
+            112,
+            115,
+            117,
+            123,
+            125,
+            142,
+            145,
+            163,
+            172,
+            180,
+            193,
+            226,
+            229,
+            235,
+            264,
+            279,
+            295,
+            300,
+            327
+          ],
+          "identical_frames_during_motion_indices": [
+            11,
+            24,
+            35,
+            49,
+            56,
+            62,
+            66,
+            83,
+            95,
+            99,
+            103,
+            105,
+            125,
+            142,
+            145,
+            163,
+            172,
+            180
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008075638219523456
+        },
+        "hand_left": {
+          "decoded_frames": 361,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 34,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 18,
+          "identical_frame_indices": [
+            11,
+            24,
+            35,
+            49,
+            56,
+            62,
+            66,
+            83,
+            88,
+            95,
+            99,
+            103,
+            105,
+            109,
+            112,
+            115,
+            117,
+            123,
+            125,
+            142,
+            145,
+            163,
+            172,
+            180,
+            193,
+            226,
+            229,
+            235,
+            264,
+            279,
+            295,
+            300,
+            318,
+            327
+          ],
+          "identical_frames_during_motion_indices": [
+            11,
+            24,
+            35,
+            49,
+            56,
+            62,
+            66,
+            83,
+            95,
+            99,
+            103,
+            105,
+            125,
+            142,
+            145,
+            163,
+            172,
+            180
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008075638219523456
+        },
+        "hand_right": {
+          "decoded_frames": 361,
+          "shape_hwc": [
+            480,
+            640,
+            3
+          ],
+          "consecutive_identical_frames": 33,
+          "continuous_step_ids": true,
+          "identical_frames_while_left_flange_moves_over_0p5mm_or_0p5deg": 18,
+          "identical_frame_indices": [
+            11,
+            24,
+            35,
+            49,
+            56,
+            62,
+            66,
+            83,
+            88,
+            95,
+            99,
+            103,
+            105,
+            109,
+            112,
+            115,
+            117,
+            123,
+            125,
+            142,
+            145,
+            163,
+            172,
+            180,
+            193,
+            226,
+            229,
+            235,
+            264,
+            279,
+            295,
+            300,
+            327
+          ],
+          "identical_frames_during_motion_indices": [
+            11,
+            24,
+            35,
+            49,
+            56,
+            62,
+            66,
+            83,
+            95,
+            99,
+            103,
+            105,
+            125,
+            142,
+            145,
+            163,
+            172,
+            180
+          ],
+          "max_flange_translation_during_identical_frame_m": 0.008075638219523456
+        }
+      },
+      "max_fk_position_error_m": 1.352177547484842e-05,
+      "max_fk_rotation_error_rad": 5.067492198731262e-05,
+      "max_action_translation_m": 0.011337838135659695,
+      "max_action_rotation_rad": 0.027748342603445053,
+      "max_reconstruction_error": 7.55649098849176e-10,
+      "gripper_commands": [
+        0.0,
+        1.0
+      ],
+      "gripper_transitions": [
+        109,
+        220
+      ],
+      "measured_gripper_width_range_m": [
+        0.07120092213153839,
+        0.10000000149011612
+      ],
+      "max_actual_joint_step_rad": 0.02961832284927368,
+      "max_actual_tcp_step_m": 0.011341683566570282,
+      "numeric_sha256": "bdb0014023cfc97ecb290e5950974d0598eceb63d97bb27e20160ba4093b1866",
+      "right_arm_max_joint_span_rad": 5.8293888287153095e-05,
+      "cup_first_last_xyz": [
+        [
+          -0.32351821660995483,
+          0.1651909202337265,
+          0.7502912282943726
+        ],
+        [
+          -0.10302555561065674,
+          0.1705680638551712,
+          0.7576178908348083
+        ]
+      ],
+      "plate_first_last_xyz": [
+        [
+          -0.10244183242321014,
+          0.17190894484519958,
+          0.7500000596046448
+        ],
+        [
+          -0.1024416834115982,
+          0.1719096302986145,
+          0.7500000596046448
+        ]
+      ],
+      "cup_plate_final_origin_xy_distance_m": 0.0014631155645474792,
+      "cup_height_range_m": [
+        0.7502912282943726,
+        0.8181057572364807
+      ],
+      "episode_randomization": {
+        "lighting": {
+          "intensity": 831.5200792313833,
+          "nominal_intensity": 1000.0,
+          "intensity_scale": 0.8315200792313833,
+          "color_mode": "warm",
+          "temperature_kelvin": 3829.4046642529947,
+          "rotation_deg": [
+            1.1851975236424606,
+            3.6170690031077726,
+            3.0940858102704816
+          ],
+          "envmap_id": 0
+        },
+        "fixtures": {
+          "table": {
+            "wood": "wood_1",
+            "tone": "standard",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/objects/wood_table/textures/light_oak_wood_v2.png",
+            "scale": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "bias": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "floor": {
+            "name": "tile_4",
+            "texture_file": "/home/agilex/qhx/.interndata/assets-kitchen/InternDataAssets/assets/custom/materials/floor_tiles/tile_04.jpg"
+          }
+        },
+        "cameras": {
+          "split_aloha_external": {
+            "translation": [
+              -0.019001133515318017,
+              -0.48203844928279493,
+              1.4294991422700902
+            ],
+            "orientation_wxyz": [
+              0.9544215255451743,
+              0.29843366229849433,
+              0.003727606396322256,
+              0.0017337051896307578
+            ],
+            "translation_offset_m": [
+              -0.019001133515318017,
+              -0.0020384492827949657,
+              -0.010500857729909701
+            ],
+            "rotation_angle_deg": -0.48099390832273015,
+            "rotation_frame": "parent",
+            "camera_axes": "usd"
+          }
+        },
+        "grasp": {
+          "mode": "best",
+          "candidate_index": 218,
+          "tilt_deg": 25.000447409858758,
+          "pregrasp_offset_m": 0.06,
+          "object_from_ee": [
+            [
+              -1.0713778588937673e-06,
+              0.42261627157652876,
+              0.9063087150621503,
+              -0.11328942418466359
+            ],
+            [
+              0.9999999999900151,
+              -3.479118179344293e-06,
+              2.804463611487832e-06,
+              -1.0433694730832554e-06
+            ],
+            [
+              4.338367081953469e-06,
+              0.9063087150561057,
+              -0.42261627156858184,
+              0.10782649555354779
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "image_freshness_concern": true,
+  "training_readiness": "Core fields complete; image/state synchronization requires investigation before accepting for training.",
+  "identical_images_during_motion_totals": {
+    "external": 375,
+    "hand_left": 378,
+    "hand_right": 377
+  }
+}

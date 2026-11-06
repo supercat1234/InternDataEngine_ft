@@ -37,14 +37,16 @@ class Lift2Controller(TemplateController):
     def forward(self, manip_cmd, eps=5e-3):
         ee_trans, ee_ori = manip_cmd[0:2]
         gripper_fn = manip_cmd[2]
-        params = manip_cmd[3]
+        params = dict(manip_cmd[3])
+        eps = params.pop("_plan_epsilon", eps)
+        hold_target = params.pop("_hold_last_target", False)
         assert hasattr(self, gripper_fn)
         method = getattr(self, gripper_fn)
         if gripper_fn in ["in_plane_rotation", "mobile_move", "dummy_forward", "joint_ctrl"]:
             return method(**params)
-        elif gripper_fn in ["update_pose_cost_metric", "update_specific"]:
+        elif gripper_fn in ["update_pose_cost_metric", "update_specific", "update_gripper_collision"]:
             method(**params)
-            return self.ee_forward(ee_trans, ee_ori, eps=eps, skip_plan=True)
+            return self.ee_forward(ee_trans, ee_ori, eps=eps, skip_plan=True, hold_last_target=hold_target)
         else:
             method(**params)
-            return self.ee_forward(ee_trans, ee_ori, eps=eps)
+            return self.ee_forward(ee_trans, ee_ori, eps=eps, hold_last_target=hold_target)

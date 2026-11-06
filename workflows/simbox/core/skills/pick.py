@@ -36,7 +36,7 @@ class Pick(BaseSkill):
         # Get grasp annotation
         usd_path = [obj["path"] for obj in task.cfg["objects"] if obj["name"] == object_name][0]
         usd_path = os.path.join(self.task.asset_root, usd_path)
-        grasp_pose_path = usd_path.replace(
+        grasp_pose_path = self.skill_cfg.get("grasp_pose_file") or usd_path.replace(
             "Aligned_obj.usd", self.skill_cfg.get("npy_name", "Aligned_grasp_sparse.npy")
         )
         sparse_grasp_poses = np.load(grasp_pose_path)
@@ -48,6 +48,8 @@ class Pick(BaseSkill):
             tcp_offset=self.skill_cfg.get("tcp_offset", self.robot.tcp_offset),
             constraints=self.skill_cfg.get("constraints", None),
         )
+        if self.skill_cfg.get("joint_chain_planning", False):
+            self.T_obj_ee[:, :3, 3] -= self.T_obj_ee[:, :3, 2] * float(self.skill_cfg.get("grasp_standoff", 0.))
 
         # Keyposes should be generated after previous skill is done
         self.manip_list = []
@@ -66,6 +68,9 @@ class Pick(BaseSkill):
             self.fixed_orientation = np.array(self.fixed_orientation)
 
     def simple_generate_manip_cmds(self):
+        if self.skill_cfg.get("joint_chain_planning", False):
+            from core.utils.cup_plate_planning import prepare_pick
+            return prepare_pick(self)
         manip_list = []
 
         # Update
@@ -84,7 +89,9 @@ class Pick(BaseSkill):
         manip_list.append(cmd)
 
         # Pre grasp
-        T_base_ee_grasps = self.sample_ee_pose()  # (N, 4, 4)
+        T_base_ee_grasps = self.sample_ee_pose(
+            max_length=self.skill_cfg.get("max_grasp_candidates", CUROBO_BATCH_SIZE)
+        )  # (N, 4, 4)
         T_base_ee_pregrasps = deepcopy(T_base_ee_grasps)
         self.controller.update_specific(
             ignore_substring=ignore_substring, reference_prim_path=self.controller.reference_prim_path
@@ -97,6 +104,26 @@ class Pick(BaseSkill):
 
         p_base_ee_pregrasps, q_base_ee_pregrasps = poses_from_tf_matrices(T_base_ee_pregrasps)
         p_base_ee_grasps, q_base_ee_grasps = poses_from_tf_matrices(T_base_ee_grasps)
+
+        if os.environ.get("INTERNDATA_DEBUG_PICK") == "1":
+            from core.utils.usd_geom_utils import compute_bbox
+
+            bbox = compute_bbox(self.pick_obj.prim)
+            print("[PICKDBG] obj_local_pose:", self.pick_obj.get_local_pose(), flush=True)
+            print("[PICKDBG] obj_bbox_min:", np.round(bbox.min, 4), "max:", np.round(bbox.max, 4), flush=True)
+            print("[PICKDBG] use_batch:", self.controller.use_batch, flush=True)
+            print("[PICKDBG] candidates_after_filter:", T_base_ee_grasps.shape[0], flush=True)
+            print("[PICKDBG] ee_current_p:", np.round(p_base_ee_cur, 4), flush=True)
+            print("[PICKDBG] pregrasp_p[:5]:", np.round(p_base_ee_pregrasps[:5], 4), flush=True)
+            print("[PICKDBG] grasp_p[:5]:", np.round(p_base_ee_grasps[:5], 4), flush=True)
+            print(
+                "[PICKDBG] T_world_base:",
+                get_relative_transform(
+                    get_prim_at_path(self.controller.reference_prim_path),
+                    get_prim_at_path(self.task.root_prim_path),
+                ),
+                flush=True,
+            )
 
         if self.controller.use_batch:
             # Check if the input arrays are exactly the same
@@ -137,6 +164,12 @@ class Pick(BaseSkill):
                         print("pick plan success")
                         break
 
+        if (not self.controller.use_batch and self.skill_cfg.get("require_valid_plan", False)
+                and not (result_pre == 1 and (self.skill_cfg.get("pre_grasp_offset", .1) <= 0 or result == 1))):
+            print(f"No collision-free pregrasp/grasp pair for {self.pick_obj.name}")
+            self.manip_list = []
+            return
+
         if self.fixed_orientation is not None:
             q_base_ee_pregrasps[index] = self.fixed_orientation
             q_base_ee_grasps[index] = self.fixed_orientation
@@ -172,7 +205,7 @@ class Pick(BaseSkill):
             p_base_ee_grasps[index],
             q_base_ee_grasps[index],
             "attach_obj",
-            {"obj_prim_path": self.pick_obj.mesh_prim_path},
+            {"obj_prim_path": getattr(self.pick_obj, "mesh_prim_paths", self.pick_obj.mesh_prim_path)},
         )
         manip_list.append(cmd)
 
@@ -185,6 +218,19 @@ class Pick(BaseSkill):
             p_base_ee_postgrasps[index][2] += post_grasp_offset
             cmd = (p_base_ee_postgrasps[index], q_base_ee_grasps[index], self.gripper_cmd, {})
             manip_list.append(cmd)
+            if os.environ.get("INTERNDATA_DEBUG_PICK") == "1" and not self.controller.use_batch:
+                try:
+                    ok_g = self.controller.test_single_ik(p_base_ee_grasps[index], q_base_ee_grasps[index])
+                    ok_post = self.controller.test_single_ik(
+                        p_base_ee_postgrasps[index], q_base_ee_grasps[index]
+                    )
+                    print(
+                        f"[PICKDBG] IK grasp={ok_g} post_lift={ok_post} lift_dz={post_grasp_offset:.3f} "
+                        f"grasp_z={p_base_ee_grasps[index][2]:.3f} lift_z={p_base_ee_postgrasps[index][2]:.3f}",
+                        flush=True,
+                    )
+                except Exception as exc:
+                    print("[PICKDBG] ik probe failed:", exc, flush=True)
 
         # Whether return to pre-grasp
         if self.skill_cfg.get("return_to_pregrasp", False):
@@ -251,8 +297,10 @@ class Pick(BaseSkill):
 
         combined_flag = np.logical_and.reduce(list(flags.values()))
         if sum(combined_flag) == 0:
+            if self.skill_cfg.get("strict_grasp_filter", False):
+                raise ValueError(f"No grasp satisfies direction constraints for {self.pick_obj.name}")
             # idx_list = [i for i in range(max_length)]
-            idx_list = list(range(max_length))
+            idx_list = random.choices(range(num_pose), k=max_length)
         else:
             tmp_scores = self.scores[combined_flag]
             tmp_idxs = np.arange(num_pose)[combined_flag]
@@ -263,7 +311,8 @@ class Pick(BaseSkill):
             weights = 1.0 / (score_list + 1e-8)
             weights = weights / weights.sum()
 
-            sampled_idx = random.choices(idx_list, weights=weights, k=max_length)
+            sampled_idx = (idx_list if self.skill_cfg.get("unique_grasp_candidates", False)
+                           else random.choices(idx_list, weights=weights, k=max_length))
             sampled_scores = self.scores[sampled_idx]
 
             # Sort indices by their scores (ascending)
@@ -317,6 +366,9 @@ class Pick(BaseSkill):
             diff_trans < t_eps,
             diff_ori < o_eps,
         )
+        if self.manip_list[0][2] == "validated_forward":
+            from core.utils.cup_plate_planning import segment_finished
+            return segment_finished(self.controller, self.manip_list[0][3]["segment"], pose_flag)
         self.plan_flag = self.controller.num_last_cmd > 10
         return np.logical_or(pose_flag, self.plan_flag)
 
@@ -330,9 +382,9 @@ class Pick(BaseSkill):
     def is_success(self):
         flag = True
 
-        _, indices = self.get_contact()
+        _, indices = self.get_contact(contact_threshold=self.skill_cfg.get("contact_threshold", 0.))
         if self.gripper_cmd == "close_gripper":
-            flag = len(indices) >= 1
+            flag = len(indices) >= self.skill_cfg.get("min_contact_fingers", 1)
 
         if self.skill_cfg.get("process_valid", True):
             self.process_valid = np.max(np.abs(self.robot.get_joints_state().velocities)) < 5 and (
@@ -343,5 +395,10 @@ class Pick(BaseSkill):
         if self.skill_cfg.get("lift_th", 0.0) > 0.0:
             p_world_obj = deepcopy(self.pick_obj.get_local_pose()[0])
             flag = flag and ((p_world_obj[2] - self.obj_init_trans[2]) > self.skill_cfg.get("lift_th", 0.0))
+
+        if self.skill_cfg.get("joint_chain_planning", False):
+            lift = float(self.pick_obj.get_local_pose()[0][2] - self.obj_init_trans[2])
+            print("Cup grasp verification:", {"contact_fingers": len(indices), "lift_m": lift,
+                                               "process_valid": bool(self.process_valid), "success": bool(flag)}, flush=True)
 
         return flag

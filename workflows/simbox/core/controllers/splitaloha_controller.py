@@ -29,15 +29,18 @@ class SplitAlohaController(TemplateController):
             self._gripper_state = 1.0 if self.robot.right_gripper_state == 1.0 else -1.0
         else:
             raise NotImplementedError("robot_file must contain 'left' or 'right'")
-        self._gripper_joint_position = np.array([1.0])
+        self._gripper_joint_position = np.array([float(self.robot.cfg["gripper_max_width"]) / 2.])
 
     def get_gripper_action(self):
-        return np.clip(self._gripper_state * self._gripper_joint_position, 0.0, 0.1)
+        return np.clip(self._gripper_state * self._gripper_joint_position, 0.0, self._gripper_joint_position)
 
     def forward(self, manip_cmd, eps=5e-3):
         ee_trans, ee_ori = manip_cmd[0:2]
         gripper_fn = manip_cmd[2]
         params = manip_cmd[3]
+        if gripper_fn == "validated_forward":
+            from core.utils.cup_plate_planning import follow_validated_segment
+            return follow_validated_segment(self, **params)
         assert hasattr(self, gripper_fn)
         method = getattr(self, gripper_fn)
         if gripper_fn in ["in_plane_rotation", "mobile_move", "dummy_forward", "joint_ctrl"]:

@@ -1,0 +1,21 @@
+# Standalone object configuration for the elastic-cup adapter.
+# The default rigid-cup production task is deliberately not switched by this file.
+asset_root: workflows/simbox/assets
+object:
+  name: paper_cup
+  path: custom/objects/paper_cup_elastic_001/Aligned_obj.usd
+  target_class: DeformableObject
+  prim_path_child: Aligned
+  simulation_mesh: SimulationMesh
+  visual_mesh: ElasticMesh
+  scale: [1.0, 1.0, 1.0]  # native meters, unlike the original millimeter mesh
+  translation: [0.0, 0.0, 0.0]
+  euler: [0.0, 0.0, 0.0]
+  apply_randomization: false
+runtime:
+  isaac_sim: '5.1'
+  deformable_beta: true
+  gpu_dynamics: true
+  physics_hz: 480
+  solver: TGS
+  solver_position_iterations: 255

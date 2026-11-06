@@ -4,6 +4,60 @@ from omni.isaac.core.utils.transformations import get_relative_transform
 from omni.isaac.sensor import Camera
 
 
+def look_at_usd_orientation(position, target, up=(0., 0., 1.)):
+    """Return wxyz: USD camera looks along -Z, with +Y pointing upward."""
+    from scipy.spatial.transform import Rotation
+
+    forward = np.asarray(target, dtype=float) - np.asarray(position, dtype=float)
+    if np.linalg.norm(forward) < 1e-9:
+        raise ValueError("Camera position and look_at target must differ")
+    forward /= np.linalg.norm(forward)
+    right = np.cross(forward, np.asarray(up, dtype=float))
+    if np.linalg.norm(right) < 1e-9:
+        raise ValueError("Camera look direction must not be parallel to look_at_up")
+    right /= np.linalg.norm(right)
+    rotation = np.column_stack([right, np.cross(right, forward), -forward])
+    return Rotation.from_matrix(rotation).as_quat()[[3, 0, 1, 2]]
+
+
+def sample_camera_pose(cfg, max_translation_noise=.05, max_orientation_noise=10., rng=None):
+    """Sample about the configured pose, never the previously perturbed pose.
+
+    Scalar translation noise preserves the legacy sphere sampling. A three-
+    element vector gives independent bounds in parent-frame X/Y/Z. Rotation
+    uses a random parent-frame axis and a bounded total axis-angle rotation.
+    """
+    from scipy.spatial.transform import Rotation
+    rng = rng if rng is not None else np.random
+    position = np.asarray(cfg["translation"], dtype=float)
+    orientation = np.asarray(cfg["orientation"], dtype=float)
+    if cfg.get("look_at") is not None:
+        if cfg["camera_axes"] != "usd":
+            raise ValueError("look_at currently requires camera_axes: usd")
+        orientation = look_at_usd_orientation(position, cfg["look_at"], cfg.get("look_at_up", [0., 0., 1.]))
+    limits = np.asarray(max_translation_noise, dtype=float)
+    if limits.shape not in [(), (3,)] or not np.isfinite(limits).all() or np.any(limits < 0):
+        raise ValueError("Camera translation noise must be a nonnegative scalar or XYZ vector")
+    angle_limit = float(max_orientation_noise)
+    if not np.isfinite(angle_limit) or angle_limit < 0:
+        raise ValueError("Camera rotation noise must be finite and nonnegative")
+    if limits.ndim == 0:
+        direction = rng.normal(size=3)
+        direction /= np.linalg.norm(direction)
+        offset = direction * rng.uniform(0., float(limits))
+    else:
+        offset = rng.uniform(-limits, limits)
+    axis = rng.normal(size=3)
+    axis /= np.linalg.norm(axis)
+    angle = float(rng.uniform(-angle_limit, angle_limit))
+    delta = Rotation.from_rotvec(axis * np.deg2rad(angle))
+    perturbed = delta * Rotation.from_quat(orientation[[1, 2, 3, 0]])
+    quaternion = perturbed.as_quat()[[3, 0, 1, 2]]
+    return {"translation": (position + offset).tolist(), "orientation_wxyz": quaternion.tolist(),
+            "translation_offset_m": offset.tolist(), "rotation_angle_deg": angle,
+            "rotation_frame": "parent", "camera_axes": cfg["camera_axes"]}
+
+
 def _get_annotator(camera: Camera, annotator_name: str):
     custom_annotators = getattr(camera, "_custom_annotators", None)
     if not isinstance(custom_annotators, dict):

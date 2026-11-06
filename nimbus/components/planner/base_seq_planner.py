@@ -6,6 +6,7 @@ from typing import Optional
 from nimbus.components.data.iterator import Iterator
 from nimbus.components.data.scene import Scene
 from nimbus.components.data.sequence import Sequence
+from nimbus.components.load.base_randomizer import StrictRetryLimitError
 from nimbus.daemon.decorators import status_monitor
 from nimbus.utils.flags import is_debug_mode
 from nimbus.utils.types import ARGS, TYPE
@@ -50,6 +51,8 @@ class SequencePlanner(Iterator):
                     self.initialize(self.scene)
                 except StopIteration:
                     raise StopIteration("No more scene to process.")
+                except StrictRetryLimitError:
+                    raise
                 except Exception as e:
                     self.logger.exception(f"Error loading next scene: {e}")
                     if is_debug_mode():
@@ -74,6 +77,8 @@ class SequencePlanner(Iterator):
 
         except StopIteration:
             raise StopIteration("No more scene to process.")
+        except StrictRetryLimitError:
+            raise
         except Exception as e:
             scene_name = getattr(self.scene, "name", "<unknown>")
             self.logger.exception(

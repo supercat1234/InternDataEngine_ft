@@ -1,0 +1,24 @@
+{
+  "device_name": "RealSense D435I",
+  "serial_number": "109122071725",
+  "firmware_version": "5.17.0.10",
+  "stream": "color",
+  "format": "rgb8",
+  "resolution_width": 640,
+  "resolution_height": 480,
+  "frequency": 30,
+  "camera_params": [
+    607.267578125,
+    607.4727172851562,
+    315.7395935058594,
+    239.52183532714844
+  ],
+  "distortion_model": "distortion.inverse_brown_conrady",
+  "distortion_coefficients": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

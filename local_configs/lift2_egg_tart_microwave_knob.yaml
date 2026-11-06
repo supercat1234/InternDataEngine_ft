@@ -1,0 +1,585 @@
+tasks:
+- name: banana_base_task
+  asset_root: /home/agilex/qhx/.interndata/microwave-resources/InternDataAssets/assets
+  task: BananaBaseTask
+  task_id: 0
+  offset: null
+  render: true
+  arena_file: local_configs/lift2_microwave_arena.yaml
+  env_map:
+    envmap_lib: envmap_lib
+    apply_randomization: false
+    intensity_range:
+    - 4000
+    - 7000
+    rotation_range:
+    - 0
+    - 180
+  robots:
+  - name: lift2
+    robot_config_file: workflows/simbox/core/configs/robots/lift2.yaml
+    euler:
+    - 0.0
+    - 0.0
+    - 90.0
+    left_joint_home:
+    - -0.00059017
+    - 0.00374724
+    - 0.00516233
+    - 0.00025332
+    - -0.00105036
+    - -0.00132419
+    right_joint_home:
+    - -0.00059017
+    - 0.00374724
+    - 0.00516233
+    - 0.00025332
+    - -0.00105036
+    - -0.00132419
+    left_joint_home_std:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    right_joint_home_std:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    ignore_substring:
+    - material
+    lift_home:
+    - 0.26
+    planner_num_ik_seeds: 256
+    planner_gripper_collision_file: local_configs/lift2_gripper_collision_spheres.yaml
+    planner_gripper_collision_arm: right
+    planner_gripper_collision_stage: turn_knob
+    rigid_food_grasp: true
+    planner_num_trajopt_seeds: 24
+    planner_num_graph_seeds: 24
+    planner_max_attempts: 20
+    planner_graph_fallback_attempt: 2
+    planner_timeout: 20.0
+    planner_ik_check_seeds: 128
+  objects:
+  - name: microwave
+    target_class: ArticulatedObject
+    dataset: pm
+    euler:
+    - 0.0
+    - 0.0
+    - 0.0
+    scale:
+    - 0.001
+    - 0.001
+    - 0.001
+    joint_position_range:
+    - 1.2
+    - 1.2
+    info_name: close_v
+    apply_randomization: false
+    path: art/heat_the_food_in_the_microwave/microwave/microwave_0013/instance.usd
+    category: microwave
+    obj_info_path: art/heat_the_food_in_the_microwave/microwave/microwave_0013/Kps/close_v/info.json
+    optimize_2d_layout: false
+    art_cat: art/heat_the_food_in_the_microwave/microwave
+    fix_base: true
+    collision_profile: hollow_microwave_0013
+  - name: pick_0
+    path: pick_and_place/pre-train-pick/assets/omniobject3d-egg_tart/omniobject3d-egg_tart_001/Aligned_obj.usd
+    target_class: RigidObject
+    dataset: oo3d
+    category: omniobject3d-egg_tart
+    prim_path_child: Aligned
+    translation:
+    - 0.0
+    - 0.0
+    - 0.0
+    euler:
+    - 90.0
+    - 0.0
+    - 0.0
+    scale:
+    - 0.001
+    - 0.001
+    - 0.001
+    apply_randomization: false
+    optimize_2d_layout: false
+  regions:
+  - object: microwave
+    target: table
+    random_type: A_on_B_region_sampler
+    random_config:
+      pos_range:
+      - - 0.13
+        - -0.006805498
+        - 0.0
+      - - 0.13
+        - -0.006805498
+        - 0.0
+      yaw_rotation:
+      - 0
+      - 0
+  - object: pick_0
+    target: table
+    random_type: A_on_B_region_sampler
+    random_config:
+      pos_range:
+      - - 0.18
+        - -0.2
+        - 0.005
+      - - 0.18
+        - -0.2
+        - 0.005
+      yaw_rotation:
+      - 0
+      - 0
+  - object: lift2
+    target: table
+    random_type: A_on_B_region_sampler
+    random_config:
+      pos_range:
+      - - -0.025
+        - -0.8
+        - -0.7
+      - - 0.025
+        - -0.8
+        - -0.6
+      yaw_rotation:
+      - 0.0
+      - 0.0
+  cameras:
+  - name: lift2_hand_left
+    translation:
+    - 0.07
+    - 0.01
+    - 0.08
+    orientation:
+    - 0.62
+    - 0.33
+    - -0.33
+    - -0.62
+    camera_axes: usd
+    camera_file: workflows/simbox/core/configs/cameras/realsense_d405.yaml
+    parent: lift2/lift2/lift2/fl/link6
+    apply_randomization: false
+    max_translation_noise: 0.02
+    max_orientation_noise: 2.5
+  - name: lift2_hand_right
+    translation:
+    - 0.07
+    - 0.01
+    - 0.08
+    orientation:
+    - 0.62
+    - 0.33
+    - -0.33
+    - -0.62
+    camera_axes: usd
+    camera_file: workflows/simbox/core/configs/cameras/realsense_d405.yaml
+    parent: lift2/lift2/lift2/fr/link6
+    apply_randomization: false
+    max_translation_noise: 0.02
+    max_orientation_noise: 2.5
+  - name: lift2_head
+    translation:
+    - 0.1
+    - 0.02
+    - 0.03
+    orientation:
+    - 0.6602
+    - 0.2534
+    - -0.2534
+    - -0.6602
+    camera_axes: usd
+    camera_file: workflows/simbox/core/configs/cameras/realsense_d455_v3.yaml
+    parent: lift2/lift2/lift2/h_link6
+    apply_randomization: false
+    max_translation_noise: 0.03
+    max_orientation_noise: 5.0
+  data:
+    task_dir: lift2_egg_tart_microwave_knob
+    language_instruction: Place the egg tart at the center of the microwave, push
+      the door closed with the left arm, then turn the knob with the right arm.
+    detailed_language_instruction: Right arm pinches and centers the egg tart in the
+      cavity, left arm pushes and holds the door closed, then right arm turns the
+      existing microwave knob.
+    collect_info: ''
+    version: v3.0, head camerea 1280x720, wrist 640x480, y 45 degrees
+    update: true
+    max_episode_length: 4000
+  skills:
+  - lift2:
+    - left:
+      - name: artpreplan
+        objects:
+        - microwave
+        planner_setting:
+          task_name: CloseBox
+          category_name: Articulated
+          tool_keypoint_name_list:
+          - tool_head
+          - tool_tail
+          - tool_side
+          object_keypoint_name_list:
+          - articulated_object_head
+          - articulated_object_tail
+          success_threshold: 0.015
+          constraint_list:
+          - keypoint_name: tool_head
+            target_keypoint_name: articulated_object_head
+            tolerance: 0.0001
+            type: point2point_constraint
+            name: fingers_contact_with_link0
+          - axis_from_keypoint_name: tool_head
+            axis_to_keypoint_name: tool_side
+            cross_target_axis1_from_keypoint_name: articulated_object_head
+            cross_target_axis1_to_keypoint_name: articulated_object_tail
+            tolerance: 0.005
+            target_inner_product: -1
+            type: frame_axis_parallel
+            name: hand_parallel_to_link0_edge_door
+          - axis_from_keypoint_name: tool_head
+            axis_to_keypoint_name: tool_tail
+            cross_target_axis1_from_keypoint_name: articulated_object_head
+            cross_target_axis1_to_keypoint_name: articulated_object_tail
+            target_axis: link0_contact_axis
+            tolerance: 0.005
+            target_inner_product: 0.7
+            type: frame_axis_parallel
+            name: fingers_orthogonal_to_link0
+          contact_pose_index: 2
+          pre_actuation_motions:
+          - - translate_x
+            - -0.05
+          post_actuation_motions:
+          - - rotate
+            - 0.15
+          - - rotate
+            - 0.15
+          - - rotate
+            - 0.15
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.05
+          - - rotate
+            - 0.05
+          keypose_random_range:
+            orientation:
+              x_min: -25
+              x_max: 25
+              y_min: -3
+              y_max: 3
+              z_min: -3
+              z_max: 3
+            position:
+              x_min: -0.02
+              x_max: 0.0
+              y_min: 0.0
+              y_max: 0.1
+              z_min: -0.05
+              z_max: 0.0
+    - right:
+      - name: pinch_food
+        objects:
+        - pick_0
+        filter_z_dir:
+        - upward
+        - 45
+        filter_x_dir:
+        - forward
+        - 45
+        pre_grasp_offset: 0.025
+        gripper_change_steps: 40
+        post_grasp_offset_min: 0.05
+        post_grasp_offset_max: 0.05
+        lift_th: 0.025
+        pinch_tip_offset: 0.148
+      - name: cavity_place
+        place_part_prim_path: base
+        place_direction: horizontal
+        align_place_obj_axis:
+        - 0.0
+        - 1.0
+        - 0.0
+        ignore_substring:
+        - microwave
+        objects:
+        - pick_0
+        - microwave
+        filter_z_dir:
+        - upward
+        - 45
+        filter_x_dir:
+        - forward
+        - 45
+        y_ratio_range:
+        - 0.35
+        - 0.45
+        x_ratio_range:
+        - 0.35
+        - 0.45
+        z_ratio_range:
+        - 0.4
+        - 0.45
+        pre_place_z_offset: 0.05
+        place_z_offset: 0.05
+        post_place_vector:
+        - 0.0
+        - -0.24
+        - 0.015
+        success_mode: xybbox
+        offset_place_obj_axis:
+        - 0.0
+        - 0.0
+        - 1.0
+        position_constraint: object
+        pre_place_align: -0.2
+        place_align: 0.0
+        pre_place_offset: 0.01
+        place_offset: 0.01
+        restore_collision_after_retreat: true
+        post_place_frame: task
+        cavity_bounds:
+        - - -0.15
+          - -0.095
+          - -0.071
+        - - 0.075
+          - 0.1
+          - 0.074
+        cavity_target:
+        - -0.0376
+        - 0.0025
+        - -0.047
+        object_target_euler:
+        - 90.0
+        - 0.0
+        - 0.0
+        center_tolerance: 0.025
+        require_center: false
+        max_center_corrections: 1
+        cavity_tolerance: 0.003
+        cavity_approach:
+        - 0.0
+        - -0.2
+        - 0.03
+        gripper_change_steps: 20
+        hesitate_steps: 10
+        object_yaw_candidates:
+        - 45.0
+        - 0.0
+        - 90.0
+        - -45.0
+        - 135.0
+        - -90.0
+        - 180.0
+        object_euler_candidates:
+        - - 90.0
+          - 0.0
+          - 0.0
+        - - -90.0
+          - 0.0
+          - 0.0
+        grip_friction: 1.2
+        cavity_pose_tolerance: 0.012
+        preserve_grasp_orientation: true
+        post_place_lift: 0.015
+        post_place_lift_vector:
+        - 0.0
+        - -0.025
+        - 0.015
+      - name: heuristic__skill
+        mode: home
+        gripper_state: 1.0
+    - left:
+      - name: close
+        objects:
+        - microwave
+        planner_setting:
+          task_name: CloseBox
+          category_name: Articulated
+          tool_keypoint_name_list:
+          - tool_head
+          - tool_tail
+          - tool_side
+          object_keypoint_name_list:
+          - articulated_object_head
+          - articulated_object_tail
+          success_threshold: 0.015
+          constraint_list:
+          - keypoint_name: tool_head
+            target_keypoint_name: articulated_object_head
+            tolerance: 0.0001
+            type: point2point_constraint
+            name: fingers_contact_with_link0
+          - axis_from_keypoint_name: tool_head
+            axis_to_keypoint_name: tool_side
+            cross_target_axis1_from_keypoint_name: articulated_object_head
+            cross_target_axis1_to_keypoint_name: articulated_object_tail
+            tolerance: 0.005
+            target_inner_product: -1
+            type: frame_axis_parallel
+            name: hand_parallel_to_link0_edge_door
+          - axis_from_keypoint_name: tool_head
+            axis_to_keypoint_name: tool_tail
+            cross_target_axis1_from_keypoint_name: articulated_object_head
+            cross_target_axis1_to_keypoint_name: articulated_object_tail
+            target_axis: link0_contact_axis
+            tolerance: 0.005
+            target_inner_product: 0.7
+            type: frame_axis_parallel
+            name: fingers_orthogonal_to_link0
+          contact_pose_index: 2
+          pre_actuation_motions:
+          - - translate_x
+            - -0.05
+          post_actuation_motions:
+          - - rotate
+            - 0.15
+          - - rotate
+            - 0.15
+          - - rotate
+            - 0.15
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.1
+          - - rotate
+            - 0.05
+          - - rotate
+            - 0.05
+          keypose_random_range:
+            orientation:
+              x_min: -25
+              x_max: 25
+              y_min: -3
+              y_max: 3
+              z_min: -3
+              z_max: 3
+            position:
+              x_min: -0.02
+              x_max: 0.0
+              y_min: 0.0
+              y_max: 0.1
+              z_min: -0.05
+              z_max: 0.0
+    - right:
+      - name: turn_knob
+        objects:
+        - microwave
+        joint_name: contact_link_0001_revolute
+        max_door_angle: 0.02
+        joint_friction: 0.01
+        max_joint_speed_deg: 90.0
+        ignore_substring:
+        # Allow contact with the dial; retain door/panel obstacles in planning.
+        # These four source shells have their physics colliders disabled.
+        - microwave_0013/instance/contact_link_0001
+        - microwave_0013/instance/base/Component_5
+        - microwave_0013/instance/base/Component_6
+        - microwave_0013/instance/base/Component_9
+        - microwave_0013/instance/base/Component_10
+        tip_offset: 0.148
+        tip_offset_candidates: [0.148, 0.156, 0.160]
+        include_other_arm_obstacles: true
+        position_tolerance: 0.004
+        orientation_tolerance: 0.03
+        plan_epsilon: 0.0001
+        approach_distance: 0.03
+        initial_retreat: 0.0
+        retreat_distance: 0.08
+        turn_angle: 1.57079632679
+        success_angle: 0.55
+        turn_steps: 36
+        grasp_steps: 45
+        grip_friction: 1.8
+        grasp_width: 0.035
+        release_width: 0.041
+        gripper_force_limit: 30.0
+        gripper_stiffness: 20000.0
+        gripper_damping: 100.0
+        roll_candidates_deg:
+        - -180
+        - -165
+        - -150
+        - -135
+        - -120
+        - -105
+        - -90
+        - -75
+        - -60
+        - -45
+        - -30
+        - -15
+        - 0
+        - 15
+        - 30
+        - 45
+        - 60
+        - 75
+        - 90
+        - 105
+        - 120
+        - 135
+        - 150
+        - 165
+        tilt_candidates_deg:
+        - 0.0
+        - -5.0
+        - 5.0
+        - -10.0
+        - 10.0
+        - -15.0
+        - 15.0
+        turn_validation_steps: 4
+        max_motion_candidates: 24
+        approach_candidates:
+        - 0.005
+        - 0.015
+        - 0.03
+        - 0.05
+  cavity_validation:
+    food: pick_0
+    container: microwave
+    bounds:
+    - - -0.15
+      - -0.095
+      - -0.071
+    - - 0.075
+      - 0.1
+      - 0.074
+    target:
+    - -0.0376
+    - 0.0025
+    - -0.047
+    center_tolerance: 0.025
+    require_center: false
+    knob_joint: contact_link_0001_revolute
+    knob_threshold: 0.55

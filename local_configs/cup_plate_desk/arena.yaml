@@ -1,0 +1,76 @@
+# =============================================================
+# 场景：木桌 + 地面
+# 桌子用的是 custom/objects/wood_table/wood_table_v2.usd
+#   - 尺寸 1.4(x) x 0.6(y) x 0.75(z) m，原点在桌面正下方地面中心
+#   - 桌面顶面固定 z = 0.75 m；桌高随机化已关闭
+#   - 无 RigidBodyAPI，作为静态碰撞体（GeometryObject）
+# 机器人由 task.yaml 的 robots.translation 直接摆位。
+# =============================================================
+name: cup_plate_desk_arena
+
+fixtures:
+  - name: table
+    path: custom/objects/wood_table/wood_table_v2.usd
+    target_class: GeometryObject
+    translation: [0.0, 0.0, 0.0]
+    # USD 网格是毫米制（metersPerUnit=0.001），必须缩到米
+    scale: [0.001, 0.001, 0.001]
+    height_randomization:
+      enabled: false  # 当前固定 750 mm 桌高，改为随机双臂安装高度
+      nominal_height: 0.75  # 基准 scale 下从地面原点到桌面的高度，m
+      height_range: [0.73, 0.77]  # 仅重新启用时生效；当前不采样此范围
+      # 仅调整 Z 缩放：桌脚保持落地，XY 尺寸不变，桌板厚度也会同比例微调。
+      # 杯盘按新桌面高度自动摆放；机器人与立柱相机不随桌子移动。
+    appearance_randomization:
+      apply_randomization: true
+      texture_shader: Looks/LightOak/WoodTexture  # 只修改桌面木纹，不修改金属桌腿
+      surface_shader: Looks/LightOak/Surface  # 纯色时直接设置 diffuseColor，断开木纹连接
+      texture_options:
+        - name: wood_1
+          file: custom/objects/wood_table/textures/light_oak_wood_v2.png
+          weight: 0.4  # 标准/浅色各约 20%
+        - name: wood_2
+          file: custom/objects/wood_table/textures/wood2.jpg
+          enabled: true
+          weight: 0.3  # 标准/浅色合计约 30%，各约 15%
+        - name: solid_wood
+          color: [0.55, 0.32, 0.16]  # 无纹理的暖木色，线性 RGB；不叠加标准/浅色档
+          weight: 0.15
+        - name: solid_white
+          color: [1.0, 1.0, 1.0]  # 白色，无木纹；保留场景光照和阴影
+          weight: 0.15
+      color_options:
+        - name: standard
+          scale: [1.0, 1.0, 1.0, 1.0]
+          bias: [0.0, 0.0, 0.0, 0.0]
+        - name: light
+          scale: [0.75, 0.75, 0.75, 1.0]
+          bias: [0.25, 0.25, 0.25, 0.0]  # 纹理颜色 × 0.75 + 白色 × 0.25
+
+  - name: floor
+    target_class: PlaneObject
+    size: [20.0, 20.0]               # 覆盖外部相机视野，避免看到近处地面的边缘
+    translation: [0.0, 0.0, -0.002]   # 略低于桌面底面，避免 z-fighting
+    tile_size: [0.6, 0.6]            # 每块地砖 60 × 60 cm
+    grout_width: 0.002              # 砖缝 2 mm
+    grout_color: [0.12, 0.12, 0.12]
+    texture:
+      apply_randomization: true
+      texture_options: #五种地砖
+        - name: black_marble
+          file: custom/materials/floor_tiles/black_marble.png
+          weight: 0.4
+        - name: tile_2
+          file: custom/materials/floor_tiles/tile_02.jpg
+          weight: 0.15
+        - name: tile_3
+          file: custom/materials/floor_tiles/tile_03.jpg
+          weight: 0.15
+        - name: tile_4
+          file: custom/materials/floor_tiles/tile_04.jpg
+          weight: 0.15
+        - name: tile_5
+          file: custom/materials/floor_tiles/tile_05.png
+          weight: 0.15
+      texture_scale: [1.0, 1.0]
+      roughness: 0.25               # 略带光泽的大理石表面

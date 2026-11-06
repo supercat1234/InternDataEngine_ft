@@ -9,6 +9,8 @@ output
 *.out
 .cursor
 assets
+!scripts/assets/
+!scripts/assets/**
 curobo
 panda_drake
 tests/*.log
@@ -19,3 +21,6 @@ InterDataEngine-docs
 debug.sh
 debug.yaml
 depre
+.workbuddy/
+.Trash-0/
+interndataengine.zip

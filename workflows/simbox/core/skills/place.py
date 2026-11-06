@@ -9,6 +9,7 @@ from core.utils.plan_utils import (
     select_index_by_priority_dual,
     select_index_by_priority_single,
 )
+from core.utils.placement_validation import placement_is_stable
 from core.utils.transformation_utils import create_pose_matrices, poses_from_tf_matrices
 from core.utils.usd_geom_utils import compute_bbox
 from omegaconf import DictConfig
@@ -62,6 +63,9 @@ class Place(BaseSkill):
         self.align_obj_tol = self.skill_cfg.get("align_obj_tol", None)
 
     def simple_generate_manip_cmds(self):
+        if self.skill_cfg.get("joint_chain_planning", False):
+            from core.utils.cup_plate_planning import prepare_place
+            return prepare_place(self)
         manip_list = []
 
         p_base_ee_cur, q_base_ee_cur = self.controller.get_ee_pose()
@@ -88,6 +92,9 @@ class Place(BaseSkill):
             manip_list.append(cmd)
 
         result = self.sample_gripper_place_traj()
+        if result is None:
+            self.manip_list = []
+            return
 
         cmd = (result[0][0], result[0][1], "close_gripper", {})
         manip_list.append(cmd)
@@ -112,18 +119,26 @@ class Place(BaseSkill):
         cmd = (p_base_ee_place, q_base_ee_place, "detach_obj", {})
         manip_list.append(cmd)
 
-        ignore_substring = deepcopy(self.controller.ignore_substring)
-        cmd = (
-            p_base_ee_place,
-            q_base_ee_place,
-            "update_specific",
-            {"ignore_substring": ignore_substring, "reference_prim_path": self.controller.reference_prim_path},
+        # Containers can overlap the gripper until it has left the opening.
+        # Opt in to keeping the placement exclusions active during retreat.
+        restore_after_retreat = self.skill_cfg.get("restore_collision_after_retreat", False) and bool(
+            self.skill_cfg.get("post_place_vector", None)
         )
-        manip_list.append(cmd)
+        if not restore_after_retreat:
+            ignore_substring = deepcopy(self.controller.ignore_substring)
+            cmd = (
+                p_base_ee_place,
+                q_base_ee_place,
+                "update_specific",
+                {"ignore_substring": ignore_substring, "reference_prim_path": self.controller.reference_prim_path},
+            )
+            manip_list.append(cmd)
 
         # Postplace
         if self.skill_cfg.get("post_place_vector", None):
             ignore_substring = deepcopy(self.controller.ignore_substring)
+            if restore_after_retreat:
+                ignore_substring += self.skill_cfg.get("ignore_substring", [])
             ignore_substring.append(self.pick_obj.name)
             cmd = (
                 p_base_ee_place,
@@ -134,7 +149,18 @@ class Place(BaseSkill):
             manip_list.append(cmd)
             cmd = (result[2][0], result[2][1], "open_gripper", {})
             manip_list.append(cmd)
+            if restore_after_retreat:
+                cmd = (
+                    result[2][0],
+                    result[2][1],
+                    "update_specific",
+                    {"ignore_substring": deepcopy(self.controller.ignore_substring),
+                     "reference_prim_path": self.controller.reference_prim_path},
+                )
+                manip_list.append(cmd)
 
+        # Let released objects settle after the retreat before checking this subtask.
+        manip_list.extend([manip_list[-1]] * int(self.skill_cfg.get("settle_steps", 0)))
         self.manip_list = manip_list
         self.place_ee_trans = p_base_ee_place
 
@@ -168,8 +194,13 @@ class Place(BaseSkill):
         if direction == "vertical":
             x = b_min[0] + x_ratios * (b_max[0] - b_min[0])
             y = b_min[1] + y_ratios * (b_max[1] - b_min[1])
-            pre_place_pos_w = np.stack([x, y, np.full(CUROBO_BATCH_SIZE, b_max[2] + pre_z_off)], axis=-1)
-            place_pos_w = np.stack([x, y, np.full(CUROBO_BATCH_SIZE, b_max[2] + plt_z_off)], axis=-1)
+            support_z = b_max[2]
+            if "support_surface_z" in self.skill_cfg:
+                # This offset is in meters in the container's pose frame, after asset scaling.
+                local_surface = np.array([0., 0., self.skill_cfg["support_surface_z"], 1.])
+                support_z = (self.T_world_container @ local_surface)[2]
+            pre_place_pos_w = np.stack([x, y, np.full(CUROBO_BATCH_SIZE, support_z + pre_z_off)], axis=-1)
+            place_pos_w = np.stack([x, y, np.full(CUROBO_BATCH_SIZE, support_z + plt_z_off)], axis=-1)
 
         elif direction == "horizontal":
             align_axis = self.T_world_container[:3, :3] @ np.array(self.skill_cfg["align_place_obj_axis"])
@@ -259,19 +290,45 @@ class Place(BaseSkill):
                         print("place plan success")
                         break
 
+        if (not self.controller.use_batch and self.skill_cfg.get("require_valid_plan", False)
+                and not (result_pre == 1 and (self.skill_cfg.get("pre_grasp_offset", .1) <= 0 or result == 1))):
+            print("No collision-free preplace/place pair")
+            return None
+
         res_pre = list(pose_from_tf_matrix(T_base_ee_preplaces[index]))
         res_plt = list(pose_from_tf_matrix(T_base_ee_places[index]))
 
         if self.skill_cfg.get("post_place_vector", None):
             post_vec = np.array(self.skill_cfg["post_place_vector"])
             T_base_ee_postplace = deepcopy(T_base_ee_places[index])
-            T_base_ee_postplace[:3, 3] = T_base_ee_places[index][:3, :3] @ post_vec + T_base_ee_places[index][:3, 3]
+            post_frame = self.skill_cfg.get("post_place_frame", "gripper")
+            if post_frame == "gripper":
+                post_vec_base = T_base_ee_places[index][:3, :3] @ post_vec
+            elif post_frame == "task":
+                post_vec_base = self.T_base_world[:3, :3] @ post_vec
+            else:
+                raise ValueError(f"Unknown post_place_frame: {post_frame}")
+            T_base_ee_postplace[:3, 3] += post_vec_base
             res_post = list(pose_from_tf_matrix(T_base_ee_postplace))
             return [res_pre, res_plt, res_post]
 
         return [res_pre, res_plt]
 
     def generate_constrained_rotation_batch(self, batch_size=3000):
+        if self.skill_cfg.get("object_rotation_mode") == "upright":
+            # Sample object yaw directly; EE direction alone cannot enforce upright objects.
+            yaw_range = self.skill_cfg.get("place_yaw_range")
+            if yaw_range is None:
+                yaw = np.random.uniform(-np.pi, np.pi, CUROBO_BATCH_SIZE)
+            else:
+                relative_rotation = self.T_world_container[:3, :3].T @ self.T_world_obj[:3, :3]
+                current_yaw = np.arctan2(relative_rotation[1, 0], relative_rotation[0, 0])
+                offsets = np.deg2rad(np.random.uniform(*yaw_range, CUROBO_BATCH_SIZE))
+                offsets[0] = 0.  # Try the current grasp yaw before changing wrist orientation.
+                yaw = current_yaw + offsets
+            rotations = R.from_euler("z", yaw).as_matrix()
+            R_base_container = (self.T_base_world @ self.T_world_container)[:3, :3]
+            return R_base_container @ rotations @ self.T_obj_ee[:3, :3]
         filter_conditions = {
             "x": {
                 "forward": (0, 0, 1),  # (row, col, direction)
@@ -349,13 +406,15 @@ class Place(BaseSkill):
         print("length of valid place rots :", len(valid_rot_mats))
 
         if len(valid_rot_mats) == 0:
+            if self.skill_cfg.get("strict_rotation_filter", False):
+                raise ValueError("No placement rotation satisfies the configured constraints")
             print("Warning: No matrix satisfies constraints")
             return rot_mats[:CUROBO_BATCH_SIZE]
         else:
             indices = np.random.choice(len(valid_rot_mats), CUROBO_BATCH_SIZE)
             return valid_rot_mats[indices]
 
-    def is_feasible(self, th=5):
+    def is_feasible(self, th=10):
         return self.controller.num_plan_failed <= th
 
     def is_subtask_done(self, t_eps=1e-3, o_eps=5e-3):
@@ -368,6 +427,9 @@ class Place(BaseSkill):
             diff_trans < t_eps,
             diff_ori < o_eps,
         )
+        if self.manip_list[0][2] == "validated_forward":
+            from core.utils.cup_plate_planning import segment_finished
+            return segment_finished(self.controller, self.manip_list[0][3]["segment"], pose_flag)
         self.plan_flag = self.controller.num_last_cmd > 10
         return np.logical_or(pose_flag, self.plan_flag)
 
@@ -382,6 +444,21 @@ class Place(BaseSkill):
         return len(self.manip_list) == 0
 
     def is_success(self, th=0.0):
+        if self.skill_cfg.get("success_mode") == "supported":
+            objects = (self.pick_obj, self.place_obj)
+            poses = [tf_matrix_from_pose(*obj.get_local_pose()) for obj in objects]
+            velocities = [(obj.get_linear_velocity(), obj.get_angular_velocity()) for obj in objects]
+            success = placement_is_stable(*poses, *velocities, self.skill_cfg)
+            if self.skill_cfg.get('joint_chain_planning', False):
+                self.controller._cup_plate_place_succeeded = bool(success)
+                relative = np.linalg.inv(poses[1]) @ poses[0]
+                print('Cup supported placement:', {'success': bool(success),
+                    'cup_xy_offset_m': float(np.linalg.norm(relative[:2, 3])),
+                    'cup_bottom_z_m': float(relative[2, 3]),
+                    'cup_tilt_deg': float(np.rad2deg(np.arccos(np.clip(relative[2, 2], -1, 1)))),
+                    'linear_speeds_m_s': [float(np.linalg.norm(v[0])) for v in velocities],
+                    'angular_speeds_rad_s': [float(np.linalg.norm(v[1])) for v in velocities]}, flush=True)
+            return success
         if self.skill_cfg.get("success_mode", "3diou") == "3diou":
             bbox_pick_obj = compute_bbox(self.pick_obj.prim)
             bbox_place_obj = compute_bbox(get_prim_at_path(self.place_prim_path))

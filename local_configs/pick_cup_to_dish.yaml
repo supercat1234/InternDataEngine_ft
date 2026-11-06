@@ -1,0 +1,165 @@
+# 自定义任务：右臂把纸杯放到盘子上（桌面 + split_aloha 双臂 + 2 腕部相机 + 1 外部固定相机）
+# 资产：omniobject3d-cup_002（杯）、omniobject3d-dish_001（盘）
+tasks:
+  -
+    name: banana_base_task
+    asset_root: workflows/simbox/assets
+    task: BananaBaseTask
+    task_id: 0
+
+    offset: null
+    render: True
+
+    arena_file: workflows/simbox/core/configs/arenas/pick_randomized_arena.yaml
+
+    env_map:
+      envmap_lib: envmap_lib
+      apply_randomization: True
+      intensity_range: [4000, 7000]
+      rotation_range: [0, 180]
+
+    robots:
+      -
+        name: "split_aloha"
+        robot_config_file: workflows/simbox/core/configs/robots/split_aloha.yaml
+        euler: [0.0, 0.0, 90.0]
+        left_joint_home: [0.00484993, 0.34198609, -0.14007858, 0.01680429, 0.14391101, -0.00252178]
+        right_joint_home: [0.00484993, 0.34198609, -0.14007858, 0.01680429, 0.14391101, -0.00252178]
+        left_joint_home_std: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        right_joint_home_std: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    objects:
+      # 被放置的盘子：固定在桌面，orientation_mode keep 保证盘面水平
+      -
+        name: place_object
+        path: pick_and_place/pre-train-pick/assets/omniobject3d-dish/omniobject3d-dish_001/Aligned_obj.usd
+        target_class: RigidObject
+        dataset: oo3d
+        category: "omniobject3d-dish"
+        prim_path_child: Aligned
+        translation: [0.0, 0.0, 0.0]
+        euler: [0.0, 0.0, 0.0]
+        scale: [0.001, 0.001, 0.001]
+        apply_randomization: False
+        orientation_mode: keep
+      # 被抓住的杯子
+      -
+        name: pick_object
+        path: pick_and_place/pre-train-pick/assets/omniobject3d-cup/omniobject3d-cup_002/Aligned_obj.usd
+        target_class: RigidObject
+        dataset: oo3d
+        category: "omniobject3d-cup"
+        prim_path_child: Aligned
+        translation: [0.0, 0.0, 0.0]
+        euler: [0.0, 0.0, 0.0]
+        scale: [0.001, 0.001, 0.001]
+        apply_randomization: False
+        orientation_mode: suggested
+
+    regions:
+      # 杯子放在右臂一侧
+      -
+        object: pick_object
+        target: table
+        random_type: A_on_B_region_sampler
+        random_config:
+          pos_range: [
+            [0.05, -0.28, 0.0],
+            [0.28, -0.05, 0.0]
+          ]
+          yaw_rotation: [-45.0, 45.0]
+      # 盘子在杯子前方（同样右臂可达范围内）
+      -
+        object: place_object
+        target: table
+        random_type: A_on_B_region_sampler
+        random_config:
+          pos_range: [
+            [-0.02, 0.02, 0.0],
+            [0.20, 0.18, 0.0]
+          ]
+          yaw_rotation: [-20.0, 20.0]
+      -
+        object: split_aloha
+        target: table
+        random_type: A_on_B_region_sampler
+        random_config:
+          pos_range: [
+            [-0.025, -0.86, -0.765],
+            [0.025, -0.86, -0.715]
+          ]
+          yaw_rotation: [0.0, 0.0]
+
+    cameras:
+      # 腕部相机 1（左）
+      -
+        name: split_aloha_hand_left
+        translation: [0.0, 0.08, 0.05]
+        orientation: [0.0, 0.0, 0.965, 0.259]
+        camera_axes: usd
+        camera_file: workflows/simbox/core/configs/cameras/astra.yaml
+        parent: "split_aloha/split_aloha_mid_360_with_piper/split_aloha_mid_360_with_piper/fl/link6"
+        apply_randomization: False
+      # 腕部相机 2（右）
+      -
+        name: split_aloha_hand_right
+        translation: [0.0, 0.08, 0.04]
+        orientation: [0.0, 0.0, 0.972, 0.233]
+        camera_axes: usd
+        camera_file: workflows/simbox/core/configs/cameras/astra.yaml
+        parent: "split_aloha/split_aloha_mid_360_with_piper/split_aloha_mid_360_with_piper/fr/link6"
+        apply_randomization: False
+      # 外部相机：parent 留空 = 固定在世界坐标系，不跟随机器人
+      # 位置在桌子对侧（y=+1.30），俯视桌面中心；朝向由 look-at 反解，forward=(0,-0.85,-0.53)
+      - name: external_camera
+        translation: [0.0, 1.30, 1.60]
+        orientation: [0.0, 0.0, 0.483, 0.8756]
+        camera_axes: usd
+        camera_file: workflows/simbox/core/configs/cameras/realsense_d455_v3.yaml
+        parent: ""
+        apply_randomization: False
+
+    data:
+      task_dir: "pick_cup_to_dish"
+      language_instruction: "Pick up the cup with the right arm and place it on the plate."
+      detailed_language_instruction: "Grasp the cup from the table with the right robotic arm, lift it, and place it stably on the center of the plate."
+      collect_info: ""
+      version: "v0.1 local split_aloha, head-less 3 cameras 2 wrist + 1 external"
+      update: True
+      max_episode_length: 1500
+
+    skills:
+      -
+        split_aloha:
+          -
+            right:
+              -
+                name: pick
+                objects: [pick_object]
+                filter_y_dir: ["forward", 90]
+                filter_z_dir: ["downward", 140]
+                pre_grasp_offset: 0.05
+                gripper_change_steps: 10
+                t_eps: 0.01
+                o_eps: 1
+                process_valid: True
+                lift_th: 0.02
+                post_grasp_offset_min: 0.05
+                post_grasp_offset_max: 0.20
+              -
+                name: place
+                objects: [pick_object, place_object]
+                filter_z_dir: ["downward", 150]
+                x_ratio_range: [0.5, 0.5]
+                y_ratio_range: [0.5, 0.5]
+                align_pick_obj_axis: [0, 1, 0]
+                align_place_obj_axis: [0, 1, 0]
+                align_obj_tol: 10
+                pre_place_z_offset: 0.15
+                place_z_offset: 0.02
+                position_constraint: object
+                success_mode: xybbox
+              -
+                name: heuristic__skill
+                mode: home
+                gripper_state: 1.0  # Open gripper

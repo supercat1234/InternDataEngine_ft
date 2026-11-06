@@ -1,0 +1,33 @@
+# Independent evaluation overrides. Does not change expert generation configs.
+source_task: local_configs/cup_plate_desk/task.yaml
+checkpoint: /home/agilex/qhx/output/pi05_simandreal/checkpoints/004000/pretrained_model
+cup_position: [-0.27, -0.07, 0.0]  # Support sampler places the bottom on table.
+plate_position: [-0.06, 0.06, 0.0]
+yaw_deg: 0
+seed: 42
+fps: 30
+execute_steps: 10
+max_steps: 1350  # 未成功最多45秒；成功后仍完整追加5秒
+output_root: /home/agilex/qhx/evaluation/sim/in_500  # 自动创建 YYYYMMDD_001、002…
+# 默认固定场景。也可用 --randomize 一次开启下列全部随机化。
+randomization:
+  layout: false    # 杯盘XY位置和yaw，范围继承 source_task 的 regions
+  lighting: false  # 光强、白/暖色温、方向
+  table: false     # 两种木纹及标准/浅色
+  floor: false     # 五种地砖
+  camera: false    # 外部相机小幅位姿扰动，腕部安装位姿固定
+post_success_seconds: 5.0  # 成功后固定追加5秒；程序统一固定此规则
+# 仅用于策略评测，不修改专家生成数据的规划/成功判据。
+success_criteria:
+  plate_outer_radius: 0.077  # success：杯底中心位于盘外轮廓内，m
+  support_radius: 0.048       # strict_success：完整杯底位于平坦支撑圆内，m
+  object_bottom_radius: 0.0265 # 实际杯底半径；37.5 mm 是杯口半径
+  support_surface_z: 0.005   # 盘面相对盘子原点高度，m
+  height_tolerance: 0.004    # 倾斜后杯底最低点距盘面误差，m
+  success_max_tilt_deg: 15.0  # 普通success允许稳定小倾斜
+  max_tilt_deg: 8.0          # strict_success保持原严格倾角
+  max_support_tilt_deg: 5.0
+  max_linear_speed: 0.015    # 杯、盘各自线速度上限，m/s
+  max_angular_speed: 0.15    # 杯、盘各自角速度上限，rad/s
+  tcp_clearance: 0.12        # TCP 距杯底中心至少超过此距离，m
+  stable_seconds: 0.5        # 连续满足所有条件的时长

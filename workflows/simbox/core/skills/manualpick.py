@@ -267,7 +267,7 @@ class Manualpick(BaseSkill):
             p_base_ee_grasps[index],
             q_base_ee_grasps[index],
             "attach_obj",
-            {"obj_prim_path": self.pick_obj.mesh_prim_path},
+            {"obj_prim_path": getattr(self.pick_obj, "mesh_prim_paths", self.pick_obj.mesh_prim_path)},
         )
         manip_list.append(cmd)
 

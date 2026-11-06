@@ -1,0 +1,79 @@
+# pipe 并行模式（单进程内起多个 Isaac worker，流水线式跑：规划段 -> 渲染段）
+# 与 run_parallel.sh 的区别：
+#   run_parallel.sh = N 个完全独立的进程，各自跑完整流水线，简单、容错好
+#   本文件         = 1 个主进程 + stage_pipe 里的 worker 进程，规划与渲染分段并发
+#
+# 单卡 4090（24 GB）建议 worker_num: [2, 1]，即 3 个 Isaac 实例常驻。
+# 想加并发就加数组里的数，但 sum(worker_num) 就是常驻实例数，超了会 CUDA OOM。
+name: simbox_pipe_custom_pick
+
+load_stage:
+  scene_loader:
+    type: env_loader
+    args:
+      workflow_type: SimBoxDualWorkFlow
+      cfg_path: local_configs/custom_pick_bread.yaml    # 会被 run_custom_scene.sh 的 TASK_CFG 覆盖
+      simulator:
+        physics_dt: 1/30
+        rendering_dt: 1/30
+        stage_units_in_meters: 1.0
+        headless: true
+        anti_aliasing: 0
+  layout_random_generator:
+    type: env_randomizer
+    args:
+      random_num: 6
+      strict_mode: false
+
+plan_stage:
+  seq_planner:
+    type: env_planner
+
+dump_stage:
+  dumper:
+    type: env
+
+dedump_stage:
+  dedumper:
+    type: de
+  scene_loader:
+    type: env_loader
+    args:
+      workflow_type: SimBoxDualWorkFlow
+      cfg_path: local_configs/custom_pick_bread.yaml    # 必须与 load_stage 一致，脚本已自动同步
+      simulator:
+        physics_dt: 1/30
+        rendering_dt: 1/30
+        rendering_interval: 5
+        headless: true
+        multi_gpu: true
+  layout_random_generator:
+    type: env_randomizer
+  seq_planner:
+    type: env_reader
+
+render_stage:
+  renderer:
+    type: env_renderer
+
+store_stage:
+  writer:
+    type: env_writer
+    args:
+      batch_async: false
+      output_dir: output/${name}/
+
+# stage_num [3,3] 把 6 个 stage 切成两段：
+#   第 1 段 = load + plan + dump      （吃 GPU 算力，CuRobo 在这里）
+#   第 2 段 = dedump + render + store （吃显存带宽和 VRAM）
+stage_pipe:
+  stage_num: [3, 3]
+  stage_dev: ["gpu", "gpu"]
+  worker_num: [2, 1]          # 2 个规划 worker + 1 个渲染 worker = 3 个 Isaac 实例
+  worker_schedule: True
+  safe_threshold: 100
+  status_timeouts:
+    idle: 360
+    ready: -1
+    running: 600
+  monitor_check_interval: 120

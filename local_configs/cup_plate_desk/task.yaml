@@ -1,0 +1,278 @@
+# 刚体纸杯任务：左臂从杯口上方进入，一指在杯内、一指在杯外，夹住同侧杯壁后放入盘子。
+# 单位约定：长度为米；euler、*_deg 和 yaw_rotation 为度；机械臂关节角为弧度。
+# orientation 四元数按 [w, x, y, z]；*_steps 为执行帧数，时长由启动配置的仿真步长决定。
+# 桌面中心固定 [0, 0, 0.75]，双臂基座相对旧配置上调 80±20 mm；相机挂载坐标系由 parent 决定。
+# 常改项：shared_region_sampling 中杯盘共同区域、regions 中 yaw、外部相机位姿、光照及抓放参数。
+# 双臂高度随机化在 robots.base_height_randomization；木纹与地砖在 arena.yaml，桌高随机化已关闭。
+# 顶抓参考位置和可达性限制见 docs/cup_plate_rim_workspace.zh-CN.md；更多说明见同目录 README.md。
+tasks:
+- name: cup_plate_desk
+  asset_root: workflows/simbox/assets  # 资产根目录；通常为指向外部资产库的软链接
+  task: BananaBaseTask  # 场景任务实现类
+  task_id: 0  # 任务实例编号
+  offset: null  # 任务整体偏移；null 使用框架默认值
+  render: true  # 开启图像渲染
+  neglect_collision_names: []  # 物理碰撞过滤对象名子串；空列表表示不额外排除
+  arena_file: local_configs/cup_plate_desk/arena.yaml  # 桌子、地面、木纹/地砖及其随机化配置
+  # ---------- 光照：每条 episode 采样一次，整段轨迹保持固定 ----------
+  env_map:
+    envmap_lib: envmap_lib  # 相对资产根目录的 HDR 环境贴图库
+    apply_randomization: false  # 是否随机更换 HDR；false 固定 HDR，下方光照随机化仍然生效
+    intensity_range: [4000, 7000]  # 旧 HDR 随机模式的强度范围；当前光强由 photometric_randomization 覆盖
+    rotation_range: [0, 180]  # 旧 HDR 随机模式的旋转范围，度；当前由下方方向扰动覆盖
+    photometric_randomization:
+      enabled: true  # 启用独立的光强、色温、方向随机化
+      nominal_intensity: 1000.0  # 标称渲染强度；不是实测照度 lux
+      intensity_scale_range: [0.8, 1.2]  # 光强倍率，实际为 800~1200
+      color_temperature_ranges:
+        white: [5500, 6500]  # 白光色温范围，K；白光/暖光两档等概率选取
+        warm: [3000, 4000]  # 暖光色温范围，K；选定档位后在档内均匀采样
+      base_rotation_deg: [0, 0, 0]  # HDR 基准 XYZ 欧拉角，度
+      rotation_jitter_deg: [5, 5, 20]  # 各欧拉角独立扰动 ±5°/±5°/±20°，不是总旋转角上限
+  # ---------- 机器人：基础配置会与这里的同名字段合并，这里优先 ----------
+  robots:
+  - name: split_aloha
+    robot_config_file: workflows/simbox/core/configs/robots/split_aloha.yaml  # 机器人基础配置：关节名、规划模型、TCP 等
+    path: split_aloha_mid_360/robot.usd  # 相对资产根目录的 USD 模型路径
+    euler: [0.0, 0.0, 90.0]  # XYZ 欧拉角，度；机器人在任务坐标系，物体姿态还会叠加区域 yaw
+    translation: [0.0, -0.68813, 0.0]  # 相对原位置后移 19.63 mm，桌板后缘与升降支架留约 2 mm 净间距；相机不随动
+    left_joint_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # 左臂 J1~J6 初始关节角，rad
+    right_joint_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # 右臂 J1~J6 初始关节角，rad
+    left_joint_home_std: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # 左臂初始关节角扰动标准差，rad；全 0 表示固定
+    right_joint_home_std: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # 右臂初始关节角扰动标准差，rad；全 0 表示固定
+    left_gripper_home: [0.0]  # 左夹爪主动单指初始位移，m；0 表示闭合
+    attached_object_spheres: 48  # 规划时用多少个球近似被夹持物体；不是物理焊接
+    attached_object_contact_links: [link7, link8]  # 允许与携带物体接触的手指连杆
+    planner_ik_rotation_threshold: 0.005  # CuRobo IK 姿态误差阈值；其内部误差度量，不直接等同角度
+    planner_ik_position_threshold: 0.001  # IK 位置误差阈值，m；此处为 1 mm
+    ignore_substring: [material, /floor/, /CupCollisionProxy/]  # 规划碰撞网格排除子串；空心杯代理仅供物理接触，规划沿用视觉网格
+    planner_gripper_open_width: 0.050  # 规划模型两指总开度，50 mm；应与 pre_grasp_width 一致
+    initial_joint_positions:
+      lifting_joint: -0.5862  # 旧配置稳定后的实测升降位置，对应 arm_base 距地面约 666.5 mm；作为高度参考
+    base_height_randomization:
+      enabled: true  # 每条布局（含重试）采样一次，整条轨迹维持同一高度
+      joint_name: lifting_joint  # 共用升降平台，左右臂共同升高，不分别采样
+      nominal_offset: 0.08  # 相对上述参考高度上移 80 mm，标称关节目标 -0.5062 m
+      offset_jitter_range: [-0.02, 0.02]  # 共同扰动 ±20 mm，最终相对原安装高度上移 60~100 mm
+      drive_stiffness: 1000000.0  # 仅升降平台的保持刚度；双臂六关节与夹爪参数不变
+      drive_damping: 10000.0  # 原升降驱动无阻尼，在新高度振荡；每次初始化后写入实际物理驱动
+      fixed_base_joint_positions:  # 本任务只改变高度；固定不用的底座平移/转向，防止受力后横向漂移
+        mobile_translate_x: -0.03685  # 沿整机局部 X，保持旧场景实际基座 Y≈-0.33687 m；不能直接归零前移
+        mobile_translate_y: 0.0
+        mobile_rotate: 0.0
+      # enabled: false 时固定在上调 80 mm 后的标称高度；地面、桌子、立柱相机不随双臂移动。
+  # ---------- 动态物体：保留原刚体杯，最终初始位置由下方 regions 决定 ----------
+  objects:
+  - name: paper_cup
+    path: custom/objects/paper_cup_001/Aligned_obj.usd  # 相对资产根目录的 USD 模型路径
+    target_class: RigidObject  # 加载为动态刚体对象
+    collision_profile: hollow_paper_cup  # 运行时构建空心杯壁凸分块碰撞体，保留杯腔；杯子仍为刚体
+    dataset: custom  # 物体资产数据集标记
+    category: paper cup  # 物体类别元信息
+    prim_path_child: Aligned  # USD 内作为物体根节点的子路径
+    translation: [0.0, 0.0, 0.0]  # 模型加载初始位置，m；regions 会重新设置杯盘位置
+    euler: [0.0, 0.0, 0.0]  # XYZ 欧拉角，度；机器人在任务坐标系，物体姿态还会叠加区域 yaw
+    scale: [0.001, 0.001, 0.001]  # 模型毫米坐标缩放为米；不要对米制抓取标注再次缩放
+    apply_randomization: false  # 不随机替换模型资产；不影响 regions 中的位置/yaw 随机化
+    orientation_mode: keep  # 保留模型配置姿态；下方 regions 仍可叠加随机 yaw
+  - name: ceramic_plate
+    path: custom/objects/ceramic_plate_001/Aligned_obj.usd  # 相对资产根目录的 USD 模型路径
+    target_class: RigidObject  # 加载为动态刚体对象
+    dataset: custom  # 物体资产数据集标记
+    category: plate  # 物体类别元信息
+    prim_path_child: Aligned  # USD 内作为物体根节点的子路径
+    translation: [0.0, 0.0, 0.0]  # 模型加载初始位置，m；regions 会重新设置杯盘位置
+    euler: [0.0, 0.0, 0.0]  # XYZ 欧拉角，度；机器人在任务坐标系，物体姿态还会叠加区域 yaw
+    scale: [0.001, 0.001, 0.001]  # 模型毫米坐标缩放为米；不要对米制抓取标注再次缩放
+    apply_randomization: false  # 不随机替换模型资产；不影响 regions 中的位置/yaw 随机化
+    orientation_mode: keep  # 保留模型配置姿态；下方 regions 仍可叠加随机 yaw
+  # ---------- 杯盘共用区域：完整物体轮廓在区域内，重新采样整对位置直至不重叠 ----------
+  shared_region_sampling:
+    enabled: true
+    target: table
+    xy_bounds: [[-0.35, -0.20], [0.10, 0.10]]  # 相对桌面 XY 中心；只改这一处即可扩大/缩小共同区域
+    object_radii: {paper_cup: 0.0375, ceramic_plate: 0.077}  # 保守外轮廓半径，m；杯口半径而非杯底
+    clearance: 0.01  # 杯盘边缘至少隔 10 mm，中心距离至少 0.1245 m
+    max_attempts: 10000  # 几何拒绝采样上限，不是规划 strict 重试次数
+  # regions 保留支撑面与 yaw；启用共享区域后，下列各自 pos_range 不再控制杯盘 XY。
+  # 关闭 shared_region_sampling.enabled 可恢复旧的各自位置范围。
+  # 此桌子 XY 中心[0, 0]，故等于任务 XY。
+  regions:
+  - object: paper_cup
+    target: table  # 作为支撑面的物体名，在 arena.yaml 中定义
+    random_type: A_on_B_region_sampler  # 在目标表面指定范围内放置当前物体
+    random_config:
+      pos_range:
+      - [-0.35, -0.15, 0.0] # 范围下界
+      - [-0.20, 0.10, 0.0]  # 范围上界
+      yaw_rotation: [-180.0, 180.0]  # 绕任务 Z 轴的旋转范围，度；叠加到已有姿态
+  - object: ceramic_plate
+    target: table  # 作为支撑面的物体名，在 arena.yaml 中定义
+    random_type: A_on_B_region_sampler  # 在目标表面指定范围内放置当前物体
+    random_config:
+      pos_range:
+      - [-0.10, -0.10, 0.0]
+      - [0.0, 0.10, 0.0]  # 杯盘随机范围由用户自行设置
+      yaw_rotation: [-180.0, 180.0]  # 绕任务 Z 轴的旋转范围，度；叠加到已有姿态
+  # ---------- 相机：手腕相机跟随 link6；外部相机独立挂在任务根坐标系 ----------
+  cameras:
+  - name: split_aloha_hand_left
+    translation: [0.0, 0.08, 0.05]  # 相对挂载 link6 的相机位置，m
+    orientation: [0.0, 0.0, 0.965, 0.259]  # [w,x,y,z] 四元数，相对 parent 挂载坐标系
+    camera_axes: usd  # USD 相机轴：视线沿局部 -Z、局部 +Y 向上
+    camera_file: workflows/simbox/core/configs/cameras/astra.yaml  # 相机内参、分辨率等配置；位姿由本文件控制
+    parent: split_aloha/split_aloha_mid_360_with_piper/split_aloha_mid_360_with_piper/fl/link6  # 挂载到对应手臂 link6，随手腕运动
+    apply_randomization: false  # 是否在每条轨迹开始时扰动相机位姿；不改变相机内参
+  - name: split_aloha_hand_right
+    translation: [0.0, 0.08, 0.04]  # 相对挂载 link6 的相机位置，m
+    orientation: [0.0, 0.0, 0.972, 0.233]  # [w,x,y,z] 四元数，相对 parent 挂载坐标系
+    camera_axes: usd  # USD 相机轴：视线沿局部 -Z、局部 +Y 向上
+    camera_file: workflows/simbox/core/configs/cameras/astra.yaml  # 相机内参、分辨率等配置；位姿由本文件控制
+    parent: split_aloha/split_aloha_mid_360_with_piper/split_aloha_mid_360_with_piper/fr/link6  # 挂载到对应手臂 link6，随手腕运动
+    apply_randomization: false  # 是否在每条轨迹开始时扰动相机位姿；不改变相机内参
+  - name: split_aloha_external
+    translation: [0.0, -0.48, 1.44]  # 光心在任务坐标系的位置，m；高于 0.75 m 桌面 690 mm，Y 为估计安装值
+    orientation: [0.96142826, 0.27505583, 0.0, 0.0]  # [w,x,y,z] 四元数；此处外部相机有 look_at，会重算基准朝向
+    look_at: [0.0, 0.0, 0.75]  # 注视目标；与 translation 同坐标系，存在时据此重算朝向
+    camera_axes: usd  # USD 相机轴：视线沿局部 -Z、局部 +Y 向上
+    camera_file: local_configs/cup_plate_desk/cameras/realsense_d435i_109122071725_rgb.yaml  # 相机内参、分辨率等配置；位姿由本文件控制
+    parent: ''  # 空字符串表示任务根坐标系中的固定相机
+    apply_randomization: true  # 是否在每条轨迹开始时扰动相机位姿；不改变相机内参
+    max_translation_noise: [0.02, 0.02, 0.02]  # XYZ 独立均匀扰动 ±0.02 m，每条轨迹固定
+    max_orientation_noise: 2.0  # 随机轴旋转总角度上限，度；每条轨迹固定
+  # ---------- 数据元信息：原始数据由记录器保存，LeRobot v3 在采集后离线转换 ----------
+  data:
+    task_dir: custom/pick_cup_to_plate_desk  # 原始数据输出中的任务子目录，不是输出根目录
+    language_instruction: Pick up the paper cup and put it on the plate.  # 保存在 episode 中的任务指令
+    # 保存在 episode 中的详细动作描述；下面三行共同组成一个字符串。
+    detailed_language_instruction: The left arm approaches vertically from above,
+      puts one finger inside the cup and one outside, pinches the same cup wall,
+      lifts the rigid cup and places it upright on the plate.
+    collect_info: desk_edge  # 采集场景标签，参与数据目录组织
+    version: v0.7 rigid cup, vertical inner-outer wall pinch, episode appearance and camera randomization  # 写入数据的任务版本描述
+    update: true  # 保留兼容标记；当前任务流程未读取该字段
+    max_episode_length: 1800  # 每条轨迹最大执行帧数，超时则不能作为成功样本保存
+  # ---------- 技能按顺序执行：左臂抓取 -> 放置并撤退 -> 回到初始位置 -> 最终稳定性复核 ----------
+  # 当前 joint_chain_planning=true：使用 cup_plate_planning 的整段筛选流程。
+  # 下方标为“旧流程”的字段仍保留兼容，但不控制当前整段规划。
+  skills:
+  - split_aloha:
+    - left:
+      - name: pick
+        objects: [paper_cup]  # 被抓取的物体名，须与上方 objects 定义一致
+        joint_chain_planning: true  # 启用抓取、抬升、搬运、放置和撤退的整段候选筛选
+        grasp_mode: rim_pinch  # 内外壁顶抓；一指在杯内、一指在杯外，夹同一侧杯壁
+        pre_grasp_width: 0.050  # 预抓/放开时的两指总开度，m；50 mm，不是单指位移
+        grasp_standoff: 0.0  # 抓取目标沿接近方向后退的距离，m；0 表示不额外后退
+        palm_clearance: 0.002  # 掌部包围盒相对杯子采样点的安全余量，m
+        palm_collision_bounds: [[-0.0829, -0.0334, -0.0001], [0.0828, 0.0921, 0.0733]]  # EE/link6 局部坐标系中的掌部包围盒 [下界, 上界]，m
+        cup_radius: 0.0375  # 杯子外包络半径，m，用于掌部碰撞筛选
+        cup_height: 0.08  # 杯子外包络高度，m
+        # 轨迹质量控制：允许短曲线，限制多余抬高、临近抓取时的晃动与推杯。
+        chain_curve_bows: [0.0, 0.01]  # 笛卡尔引导曲线中点向上拱起的候选高度，m；0 与 10 mm
+        chain_approach_rotation_deg: 0.75  # 最后入杯段相对目标姿态的最大偏差，度；限制摇晃，不是抓取倾角
+        chain_max_height_excess: 0.025  # 非预抓段轨迹高出两个端点最高处的上限，m；抑制多余抬高
+        chain_max_joint_step: 0.025  # 引导曲线重采样后相邻关节命令的最大增量，rad；不是速度上限
+        chain_max_preclose_cup_shift: 0.003  # 闭爪前允许杯子相对初始位置的最大 XY 偏移，m
+        chain_grasp_settle_steps: 3  # 入杯到位后、闭爪前连续稳定的帧数
+        chain_grasp_settle_speed: 0.05  # 闭爪前机械臂最大绝对关节速度阈值，rad/s
+        # 顶抓预抓点在目标正上方；倾角筛选与候选标注的角度必须配套。
+        # 当前 .npy 高度为距杯底 65/68/71/74 mm，切线有符号倾角 0°/±2°/±5°/±10°/+15°。
+        # TCP 高度不是实际指尖接触高度；当前不再使用 77/80 mm 的近杯口候选。
+        # 这里只筛选已有标注；更改高度/角度后须用 make_cup_grasp_labels.py 重新生成 .npy。
+        pre_grasp_offsets: [0.04, 0.055, 0.07]  # 预抓点高于抓取目标的候选距离，m；当前沿任务竖直方向
+        chain_flexible_approach: true  # 上方允许调整姿态，最后一小段入杯保持稳定
+        chain_stable_entry_distance: 0.012  # 最后固定姿态竖直入杯的 TCP 距离，m
+        chain_pregrasp_rotations_deg: [0, -5, 5, -10, 10]  # 上方预抓姿态相对抓取姿态绕闭合轴调整，度
+        downward_tilt_range_deg: [75.0, 90.0]  # 接近轴相对水平面向下的角度范围；75~90° 等于偏离竖直 0~15°
+        chain_entry_lateral_tolerance: 0.002  # 最后竖直入杯段 TCP 相对目标的最大横向偏移，m
+        # IK/路径候选预算：增加预算可能提升找到解的机会，也会增加耗时。
+        chain_preferred_margin_deg: 5.0  # IK 评分优先保持的关节限位余量，度；软偏好
+        chain_min_margin_deg: 1.0  # IK 端点距关节限位的最小余量，度；路径复核采用其一半
+        chain_max_candidates: 16  # 最多尝试多少组“抓取姿态 + 预抓距离”的完整规划候选
+        chain_planning_timeout_s: 45.0  # 初始整段规划总预算，秒；超时记为本布局失败，继续采样
+        chain_place_timeout_s: 20.0  # 实抓后放置重规划预算，秒；与初始规划分开计时
+        chain_refresh_timeout_s: 10.0  # 执行起点漂移后的单段刷新预算，秒
+        chain_progress_interval_s: 5.0  # 规划期间按此间隔打印阶段、耗时及剩余预算
+        chain_grasp_selection: best  # best 按评分尝试；random_top_k 打乱前 K 组后继续按评分回退
+        chain_grasp_top_k: 8  # random_top_k 模式前 K 组候选数；best 模式不使用
+        chain_place_candidates: 12  # 每次放置求解最多尝试的候选组数
+        chain_ik_batch_size: 64  # IK 固定批大小；不足时填充，用于 CUDA graph
+        chain_ik_branches: 4  # 每个目标返回的 IK 关节解分支数量
+        chain_lift_height: 0.05  # 闭爪后抬升目标 50 mm，比原来多抬 10 mm；实际抬升另用 lift_th 检查
+        chain_lift_shifts: [0.0, 0.02, 0.04]  # 抬升同时向臂基座侧平移的候选距离，m
+        chain_lift_tilts_deg: [0, -5, 5, -10, 10]  # 抬升同时绕夹爪闭合轴轻微转动杯子的候选角，度
+        chain_lift_candidates: 6  # 每组抓取最多尝试的抬升候选数
+        chain_lift_max_tilt_deg: 10.0  # 刚离桌的抬升段保持小角度，杯轴偏离竖直的上限，度
+        chain_carry_max_tilt_deg: 60.0  # 搬运到预放置点途中允许大角度调整；落盘段另按 max_tilt_deg<=8° 检查
+        chain_reuse_start_tolerance_deg: 3.0  # 执行起点与已规划起点关节偏差上限，度；超出时刷新该段
+        gripper_change_steps: 10  # 保持机械臂目标并执行夹爪开合的帧数
+        t_eps: 0.002  # 末端位置到位判据，m
+        o_eps: 0.01  # 末端姿态到位角误差，rad
+        process_valid: true  # 抓取后检查关节和物体速度是否出现异常
+        lift_th: 0.02  # 抓取成功所需的实际杯子抬升高度下限，m；此处为 20 mm
+        # 旧逐段规划的抬升距离；当前整段规划使用上面的 chain_lift_height。
+        post_grasp_offset_min: 0.1  # 旧逐段流程的随机抬升下界，m；当前不用
+        post_grasp_offset_max: 0.12  # 旧逐段流程的随机抬升上界，m；当前不用
+        grasp_pose_file: local_configs/cup_plate_desk/grasps/paper_cup_rim.npy  # 米制抓取标注；768 个原始顶抓标注经对称处理得到最多 1536 个工具姿态
+        # 以下三个字段属于旧抓取候选筛选；当前整段流程直接读取全部标注后另行筛选。
+        strict_grasp_filter: true  # 旧筛选：无姿态符合条件时拒绝，不回退到不合格姿态
+        max_grasp_candidates: 1536  # 旧筛选的最大候选数；当前整段预算为 chain_max_candidates
+        unique_grasp_candidates: true  # 旧筛选：不进行有放回的重复候选抽样
+        require_valid_plan: true  # 旧逐段流程要求有效规划；当前整段流程自身会逐段检查
+        min_contact_fingers: 2  # 抓取成功至少需要有接触的手指数
+        contact_threshold: 0.0001  # 手指接触矩阵的绝对分量求和阈值；仅用于判定接触，不是目标夹持力
+      - name: place
+        objects: [paper_cup, ceramic_plate]  # 依次为被搬运的杯子、目标盘子
+        joint_chain_planning: true  # 启用抓取、抬升、搬运、放置和撤退的整段候选筛选
+        chain_place_yaw_step_deg: 15.0  # 保持杯子直立时，放置绕 Z 轴搜索的角度间隔，度
+        chain_place_tilts_deg: [0, 3, 4, 6, 7]  # 放置杯姿候选，度；新增 6°/7°，为 8° 成功上限留出跟踪误差余量
+        chain_flexible_placement: true  # 搬运衔接短距离稳定落盘；松爪后空夹爪独立搜索撤退姿态
+        chain_final_place_distance: 0.012  # 最后保持杯姿 <=8° 的落盘距离，m
+        chain_retreat_rotations_deg: [0, -5, 5, -10, 10, -20, 20]  # 松爪后空夹爪相对落盘姿态绕闭合轴调整，度
+        object_bottom_radius: 0.0265  # 实际杯底半径，m；倾斜落盘时用于杯底最低点的高度补偿
+        place_direction: vertical  # 旧逐段放置方向；当前整段放置沿竖直方向下降
+        x_ratio_range: [0.5, 0.5]  # 旧流程落点相对盘子包围盒的 X 比例；0.5 为中心，当前整段固定盘中心
+        y_ratio_range: [0.5, 0.5]  # 旧流程落点相对盘子包围盒的 Y 比例；0.5 为中心，当前整段固定盘中心
+        place_z_offset: 0.003  # 松爪目标相对盘内支撑面的额外高度，m
+        position_constraint: object  # 旧流程按物体位置约束落点，而不是直接把夹爪放到落点
+        success_mode: supported  # 使用支撑、直立和速度判据判断放置成功
+        pre_place_z_offset: 0.04  # 非灵活模式的预放置高度，m；当前由 chain_final_place_distance 控制最后落盘段
+        # 支撑判据：中心偏差不得超过 support_radius - object_radius = 10.5 mm。
+        # 检查杯子相对盘子的高度/倾角、盘子倾角和两者速度；下方 verify_placement 应保持一致。
+        support_surface_z: 0.005  # 盘内支撑面相对盘子原点的高度，m
+        support_radius: 0.048  # 盘内可用支撑圆半径，m，不是整个盘子的外半径
+        object_radius: 0.0375  # 成功判定使用的杯子保守占地半径，m
+        height_tolerance: 0.004  # 杯底相对支撑面高度的允许误差，m
+        max_tilt_deg: 8.0  # 杯轴相对盘面法线的倾角上限，度
+        max_support_tilt_deg: 5.0  # 盘面相对世界竖直的倾角上限保持 5°
+        max_linear_speed: 0.015  # 杯子与盘子的线速度模长上限，m/s，用于稳定性判定
+        max_angular_speed: 0.15  # 杯子与盘子的角速度模长上限，rad/s，用于稳定性判定
+        object_rotation_mode: upright  # 旧流程也要求杯子直立；当前整段目标构造直接保持直立
+        place_yaw_range: [-180.0, 180.0]  # 旧流程放置 yaw 范围，度；当前整段按完整周向和上述步长搜索
+        strict_rotation_filter: true  # 旧流程姿态筛选无有效候选时拒绝，不回退
+        require_valid_plan: true  # 旧逐段流程要求有效规划；当前整段流程自身会逐段检查
+        post_place_vector: [0.0, 0.0, 0.04]  # 松爪后撤退的平移向量，m；此处竖直上撤 40 mm
+        post_place_frame: task  # 旧流程撤退向量坐标系；当前整段直接按任务坐标系解释向量
+        settle_steps: 30  # 放置撤退后保持位置，等待物体沉稳的帧数
+        t_eps: 0.003  # 末端位置到位判据，m
+        o_eps: 0.04  # 末端姿态到位角误差，rad
+      - name: return_home
+        # 松爪并撤退后，先回到本次任务起始关节位置，回位动作也写入数据。
+        planning_timeout_s: 20.0  # 碰撞检查与回位规划预算，秒
+        joint_tolerance_deg: 0.5  # 六关节最大绝对回位误差，度
+        stable_steps: 3  # 连续达标帧数；不能仅走完命令就算回位成功
+      - name: verify_placement
+        # 保持机械臂位置，在等待窗口末尾要求连续 stable_steps 帧满足支撑判据。
+        objects: [paper_cup, ceramic_plate]  # 依次为被搬运的杯子、目标盘子
+        gripper_state: -1.0  # 回位后的最终复核保持左夹爪闭合，恢复起始状态
+        wait_steps: 60  # 最终复核总等待帧数；结束时才判定成功
+        stable_steps: 15  # 等待窗口末尾至少连续多少帧通过全部稳定性判据，须不大于 wait_steps
+        support_surface_z: 0.005  # 盘内支撑面相对盘子原点的高度，m
+        support_radius: 0.048  # 盘内可用支撑圆半径，m，不是整个盘子的外半径
+        object_radius: 0.0375  # 成功判定使用的杯子保守占地半径，m
+        height_tolerance: 0.004  # 杯底相对支撑面高度的允许误差，m
+        max_tilt_deg: 8.0  # 机械臂回位后复核杯子倾角 <=8°
+        max_support_tilt_deg: 5.0  # 盘子保持平放，允许倾角上限仍为 5°
+        max_linear_speed: 0.015  # 杯子与盘子的线速度模长上限，m/s，用于稳定性判定
+        max_angular_speed: 0.15  # 杯子与盘子的角速度模长上限，rad/s，用于稳定性判定

@@ -619,8 +619,11 @@ def build_plant(time_step=0.004, discrete_contact_solver="sap", robot_name=None,
     global robot_plant
     multibody_plant_config = MultibodyPlantConfig(
         time_step=time_step,
-        discrete_contact_solver=discrete_contact_solver,
     )
+    if hasattr(multibody_plant_config, "discrete_contact_solver"):
+        multibody_plant_config.discrete_contact_solver = discrete_contact_solver
+    else:
+        multibody_plant_config.discrete_contact_approximation = discrete_contact_solver
     builder = DiagramBuilder()
     robot_plant, _ = AddMultibodyPlant(multibody_plant_config, builder)
     if "split_aloha" in robot_name:
@@ -649,7 +652,7 @@ def build_plant(time_step=0.004, discrete_contact_solver="sap", robot_name=None,
 def AddR5a(plant, init_qpos):
     franka_combined_path = "workflows/simbox/panda_drake/r5a/R5a.urdf"
     parser = Parser(plant)
-    franka = parser.AddModelFromFile(franka_combined_path)
+    franka = parser.AddModels(file_name=franka_combined_path)[0]
     plant.WeldFrames(plant.world_frame(), plant.GetFrameByName("base_link"))
 
     # Set default positions:

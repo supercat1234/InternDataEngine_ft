@@ -35,6 +35,8 @@ InternDataEngine is a synthetic data generation engine for embodied AI that powe
 
 Please refer to the [Installation](https://internrobotics.github.io/InternDataEngine-Docs/guides/installation.html) and [Usage](https://internrobotics.github.io/InternDataEngine-Docs/guides/quickstart.html) to start the installation and run your first synthetic data generation task.
 
+Local Aloha cup-to-plate task: see [configuration and usage](local_configs/cup_plate_desk/README.md).
+
 For more details, please check [Documentation](https://internrobotics.github.io/InternDataEngine-Docs/).
 
 ## License and Citation

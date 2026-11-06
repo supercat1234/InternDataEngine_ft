@@ -85,8 +85,19 @@ class CustomCamera(Camera):
         self.set_clipping_range(0.05, 1.0e5)
         self.set_projection_type("pinhole")
 
-        fx = width * self.get_focal_length() / self.get_horizontal_aperture()
-        fy = height * self.get_focal_length() / self.get_vertical_aperture()
+        if cfg["params"].get("use_calibrated_intrinsics", False):
+            # Isaac 5.1's native model applies both focal lengths and the actual
+            # principal point to rendering, rather than only recording them.
+            coefficients = list(cfg["params"].get("distortion_coefficients", [0.] * 5))
+            model = cfg["params"].get("distortion_model", "none")
+            if any(abs(c) > 1e-12 for c in coefficients) and model not in ["none", "brown_conrady", "distortion.brown_conrady"]:
+                raise ValueError("Nonzero inverse/modified Brown coefficients require conversion or rectified RGB")
+            self.set_opencv_pinhole_properties(cx=cx, cy=cy, fx=fx, fy=fy, pinhole=coefficients)
+            if cfg["params"].get("frequency"):
+                self.set_frequency(int(cfg["params"]["frequency"]))
+        else:
+            fx = width * self.get_focal_length() / self.get_horizontal_aperture()
+            fy = height * self.get_focal_length() / self.get_vertical_aperture()
         self.is_camera_matrix = np.array([[fx, 0.0, cx], [0.0, fy, cy], [0.0, 0.0, 1.0]])
 
         self.reference_path = reference_path
@@ -176,7 +187,7 @@ class CustomCamera(Camera):
             "camera_params": self.is_camera_matrix.tolist(),
         }
         if self.with_depth:
-            obs["depth_image"] = get_src(self, "depth"),
+            obs["depth_image"] = get_src(self, "depth")
 
         seg_data = get_src(self, "seg")
         if seg_data is not None:

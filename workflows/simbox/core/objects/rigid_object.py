@@ -3,6 +3,7 @@ import os
 import random
 
 from core.objects.base_object import register_object
+from core.utils.rigid_geometry import collect_mesh_paths
 from omni.isaac.core.prims import RigidPrim
 from omni.isaac.core.utils.prims import create_prim, get_prim_at_path
 
@@ -46,7 +47,15 @@ class RigidObject(RigidPrim):
         create_prim(prim_path=prim_path, usd_path=usd_path)
         self.base_prim_path = prim_path
         rigid_prim_path = os.path.join(self.base_prim_path, cfg["prim_path_child"])
-        self.mesh_prim_path = str(get_prim_at_path(rigid_prim_path).GetChildren()[0].GetPrimPath())
+        rigid_prim = get_prim_at_path(rigid_prim_path)
+        if not rigid_prim.IsValid():
+            raise ValueError(f"Missing rigid-body prim {rigid_prim_path} in {usd_path}")
+        self.mesh_prim_paths = collect_mesh_paths(rigid_prim)
+        # Preserve the singular attribute for older skills.
+        self.mesh_prim_path = self.mesh_prim_paths[0]
+        if cfg.get("collision_profile") == "hollow_paper_cup":
+            from core.utils.hollow_cup_collision import build_hollow_cup
+            build_hollow_cup(rigid_prim.GetStage(), rigid_prim, self.mesh_prim_paths)
         super().__init__(prim_path=rigid_prim_path, name=cfg["name"], *args, **kwargs)
 
     def get_observations(self):

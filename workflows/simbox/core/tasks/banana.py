@@ -71,6 +71,9 @@ class BananaBaseTask(BaseTask):
             if cfg["target_class"] == "ConveyorObject":
                 self.conveyor_velocity = cfg["linear_velocity"][0]
 
+        self._set_fixture_heights()
+        self._set_fixture_appearance()
+
         self.cfg = update_rigid_objs(self.cfg)
         self.cfg = update_articulated_objs(self.cfg)
 
@@ -79,6 +82,7 @@ class BananaBaseTask(BaseTask):
 
         for cfg in self.cfg["robots"]:
             self._load_robot(cfg)
+        self._set_robot_base_heights()
         for cfg in self.cfg["cameras"]:
             self._load_camera(cfg)
             if cfg.get("apply_randomization", False):
@@ -143,6 +147,9 @@ class BananaBaseTask(BaseTask):
         optimize_2d_manip_layout(self.cfg["objects"], self.cfg["regions"], self.objects)
         self.pickcontact_views = self._set_pickcontact_view(self.cfg)
         self.artcontact_views = self._set_artcontact_view(self.cfg)
+        # PhysX must see resized static collision meshes before World.reset().
+        self._set_fixture_heights()
+        self._set_robot_base_heights()
 
     def individual_reset_from_mem(self):
         for cfg in self.cfg["arena"]["fixtures"]:
@@ -161,6 +168,8 @@ class BananaBaseTask(BaseTask):
         optimize_2d_manip_layout(self.cfg["objects"], self.cfg["regions"], self.objects)
         self.pickcontact_views = self._set_pickcontact_view(self.cfg)
         self.artcontact_views = self._set_artcontact_view(self.cfg)
+        self._set_fixture_heights(use_mem=True)
+        self._set_robot_base_heights(use_mem=True)
 
     def individual_randomize(self):
         # Randomize objects in regions
@@ -187,12 +196,12 @@ class BananaBaseTask(BaseTask):
 
     def individual_randomize_from_mem(self):
         # Randomize objects in regions (re-sample placements)
-        self._set_regions()
+        self._set_regions(use_mem=True)
 
         # Update envmap, fixture textures, and camera poses
-        self._set_envmap()
-        self._set_fixture_textures()
-        self._set_camera_poses()
+        self._set_envmap(use_mem=True)
+        self._set_fixture_textures(use_mem=True)
+        self._set_camera_poses(use_mem=True)
 
         # Rebuild visual distractors from mem (no new random placement)
         if self.cfg.get("mem_distractors", None) and self.cfg.get("distractors", None):
@@ -285,9 +294,16 @@ class BananaBaseTask(BaseTask):
             name=cfg["name"],
         )
 
+        orientation = cfg["orientation"]
+        if cfg.get("look_at") is not None:
+            from core.utils.camera_utils import look_at_usd_orientation
+            if cfg["camera_axes"] != "usd":
+                raise ValueError("look_at currently requires camera_axes: usd")
+            orientation = look_at_usd_orientation(cfg["translation"], cfg["look_at"],
+                                                  cfg.get("look_at_up", [0., 0., 1.]))
         camera.set_local_pose(
             translation=cfg["translation"],
-            orientation=cfg["orientation"],
+            orientation=orientation,
             camera_axes=cfg["camera_axes"],
         )
 
@@ -329,6 +345,10 @@ class BananaBaseTask(BaseTask):
         # Extra behavior per type
         if target_class == "ArticulatedObject":
             obj.get_joint_position(self.stage)
+            if cfg.get("collision_profile") == "hollow_microwave_0013":
+                from core.utils.microwave_collision import build_hollow_microwave
+
+                build_hollow_microwave(self.stage, obj)
         elif target_class == "ShapeObject":
             material = PreviewSurface(
                 prim_path="/World/Materials/Red",
@@ -352,6 +372,14 @@ class BananaBaseTask(BaseTask):
                 for lr_skill_dict in robot_skill_list:
                     for lr_name, lr_skill_list in lr_skill_dict.items():
                         for lr_skill in lr_skill_list:
+                            if lr_skill.get("name") == "turn_knob":
+                                robot = self.robots[robot_name]
+                                object_name = lr_skill["objects"][0]
+                                body = os.path.dirname(self._task_objects[object_name].object_base_path) + "/contact_link_0001"
+                                filters = robot.fl_filter_paths_expr if lr_name == "left" else robot.fr_filter_paths_expr
+                                views = artcontact_views.setdefault(robot_name, {}).setdefault(lr_name, {})
+                                views[object_name + "_knob_fingers"] = RigidContactView(
+                                    prim_paths_expr=body, filter_paths_expr=filters)
                             if lr_skill.get("name") == "open" or lr_skill.get("name") == "close":
                                 if robot_name not in artcontact_views:
                                     artcontact_views[robot_name] = {}
@@ -401,7 +429,7 @@ class BananaBaseTask(BaseTask):
                 for lr_skill_dict in robot_skill_list:
                     for lr_name, lr_skill_list in lr_skill_dict.items():
                         for lr_skill in lr_skill_list:
-                            if "pick" in lr_skill.get("name"):
+                            if "pick" in lr_skill.get("name") or lr_skill.get("name") == "pinch_food":
                                 if robot_name not in pickcontact_views:
                                     pickcontact_views[robot_name] = {}
                                 if lr_name not in pickcontact_views[robot_name]:
@@ -418,10 +446,55 @@ class BananaBaseTask(BaseTask):
                                     )
         return pickcontact_views
 
-    def _set_regions(self):
+    def _set_shared_regions(self, use_mem=False):
+        from core.utils.shared_region_sampling import sample_separated_disks
+        spec = self.cfg.get("shared_region_sampling", {})
+        if not spec.get("enabled", False):
+            return set()
+        names = list(spec["object_radii"])
+        regions = {cfg["object"]: cfg for cfg in self.cfg["regions"]}
+        if any(regions[name]["target"] != spec["target"] or
+               regions[name]["random_type"] != "A_on_B_region_sampler" for name in names):
+            raise ValueError('Shared objects must use A_on_B_region_sampler on the same target')
+        target = self._task_objects[spec["target"]]
+        from core.utils.usd_geom_utils import compute_bbox
+        bounds = np.asarray(spec["xy_bounds"], dtype=float)
+        box = compute_bbox(target.prim)
+        center = (np.asarray(box.min)[:2]+np.asarray(box.max)[:2])/2
+        if bounds.shape != (2, 2) or np.any(bounds[0]+center < np.asarray(box.min)[:2]-1e-6) or np.any(bounds[1]+center > np.asarray(box.max)[:2]+1e-6):
+            raise ValueError('Shared XY region must fit inside the support tabletop')
+        state = self.cfg.get("mem_shared_layout") if use_mem else None
+        if state is not None:
+            for name in names:
+                self._task_objects[name].set_local_pose(**state["poses"][name])
+            return set(names)
+        radii = [float(spec["object_radii"][name]) for name in names]
+        positions, attempts = sample_separated_disks(bounds, radii,
+            float(spec.get("clearance", .01)), spec.get("max_attempts", 10000))
+        object_configs = {cfg["name"]: cfg for cfg in self.cfg["objects"]}
+        poses = {}
+        for name, xy in zip(names, positions):
+            obj = self._task_objects[name]
+            cfg = object_configs[name]
+            # Restore upright model attitude before measuring height and sampling yaw.
+            obj.set_local_pose(orientation=get_orientation(cfg.get("euler"), cfg.get("quaternion")))
+            fixed = [float(xy[0]), float(xy[1]), 0.]
+            position, orientation = RandomRegionSampler.A_on_B_region_sampler(obj, target,
+                [fixed, fixed], regions[name]["random_config"]["yaw_rotation"])
+            obj.set_local_pose(position, orientation)
+            poses[name] = {"translation": np.asarray(position).tolist(), "orientation": np.asarray(orientation).tolist()}
+        self.cfg["mem_shared_layout"] = {"xy_bounds": bounds.tolist(), "object_radii": dict(spec["object_radii"]),
+            "clearance": float(spec.get("clearance", .01)), "sampling_attempts": attempts, "poses": poses}
+        print("Shared object layout:", dict(self.cfg["mem_shared_layout"]), flush=True)
+        return set(names)
+
+    def _set_regions(self, use_mem=False):
         """Randomize object poses according to region configs."""
+        shared_names = self._set_shared_regions(use_mem=use_mem)
         random_region_list = deepcopy(self.random_region_list)
         for cfg in self.cfg["regions"]:
+            if cfg["object"] in shared_names:
+                continue
             obj = self._task_objects[cfg["object"]]
             tgt = self._task_objects[cfg["target"]]
             if "sub_tgt_prim" in cfg:
@@ -453,13 +526,50 @@ class BananaBaseTask(BaseTask):
                 pose = sampler_fn(obj, tgt, **cfg["random_config"])
                 obj.set_local_pose(*pose)
 
-    def _set_fixture_textures(self):
+    def _set_robot_base_heights(self, use_mem=False):
+        from core.utils.robot_height_randomization import episode_initial_joint_positions, set_robot_height_limits
+        for cfg in self.cfg["robots"]:
+            robot = self.robots[cfg["name"]]
+            robot._episode_initial_joint_positions = episode_initial_joint_positions(cfg, use_mem)
+            set_robot_height_limits(self.stage, robot, cfg, robot._episode_initial_joint_positions)
+            robot._episode_base_height_cfg = cfg.get("base_height_randomization")
+            if robot._episode_base_height_cfg:
+                print(f"Robot base height {cfg['name']}: {dict(robot._episode_base_height_cfg['mem_height'])}", flush=True)
+
+    def _set_fixture_heights(self, use_mem=False):
+        from core.utils.fixture_randomization import apply_fixture_height
+        previous = getattr(self, "_height_randomized_fixtures", set())
+        current = set()
+        for cfg in self.cfg["arena"]["fixtures"]:
+            if cfg.get("height_randomization"):
+                state = apply_fixture_height(self.fixtures[cfg["name"]], cfg, use_mem=use_mem)
+                current.add(cfg["name"])
+                print(f"Fixture height {cfg['name']}: {state}", flush=True)
+            elif cfg["name"] in previous:
+                # Old saved scenes predate this option; restore their baseline scale.
+                self.fixtures[cfg["name"]].set_local_scale(cfg.get("scale", [1., 1., 1.]))
+        self._height_randomized_fixtures = previous | current
+
+    def _set_fixture_appearance(self, use_mem=False):
+        from core.utils.appearance_randomization import apply_fixture_appearance
+        for cfg in self.cfg["arena"]["fixtures"]:
+            if cfg.get("appearance_randomization"):
+                state = apply_fixture_appearance(self.stage, self.fixtures[cfg["name"]].prim_path,
+                    cfg["appearance_randomization"], self.asset_root, use_mem=use_mem)
+                print(f"Fixture appearance {cfg['name']}: {state}", flush=True)
+
+    def _set_fixture_textures(self, use_mem=False):
         """Apply or randomize textures for arena fixtures (table, floor, background)."""
         for cfg in self.cfg["arena"]["fixtures"]:
             if cfg.get("texture"):
-                self.fixtures[cfg["name"]].apply_texture(self.asset_root, cfg.get("texture"))
+                obj = self.fixtures[cfg["name"]]
+                if cfg["target_class"] == "PlaneObject":
+                    obj.apply_texture(self.asset_root, cfg["texture"], use_mem=use_mem)
+                else:
+                    obj.apply_texture(self.asset_root, cfg["texture"])
+        self._set_fixture_appearance(use_mem=use_mem)
 
-    def _set_camera_poses(self):
+    def _set_camera_poses(self, use_mem=False):
         """Randomize camera poses according to camera configs."""
         for cfg in self.cfg["cameras"]:
             if cfg.get("apply_randomization", False):
@@ -468,14 +578,17 @@ class BananaBaseTask(BaseTask):
                     cfg,
                     max_translation_noise=cfg.get("max_translation_noise", 0.05),
                     max_orientation_noise=cfg.get("max_orientation_noise", 10.0),
+                    use_mem=use_mem,
                 )
 
-    def _set_envmap(self):
+    def _set_envmap(self, use_mem=False):
         """Randomize or reset the environment map (HDR dome light)."""
         cfg = self.cfg["env_map"]
         if cfg.get("light_type", "DomeLight") == "DomeLight":
             envmap_hdr_path_list = glob.glob(os.path.join(self.asset_root, cfg["envmap_lib"], "*.hdr"))
             envmap_hdr_path_list.sort()
+            if not envmap_hdr_path_list:
+                raise ValueError(f"No HDR environment maps in {cfg['envmap_lib']}")
             if cfg.get("apply_randomization", False):
                 envmap_id = random.randint(0, len(envmap_hdr_path_list) - 1)
                 intensity = random.uniform(cfg["intensity_range"][0], cfg["intensity_range"][1])
@@ -484,6 +597,16 @@ class BananaBaseTask(BaseTask):
                 envmap_id = 0
                 intensity = 1000.0
                 rotation = [0.0, 0.0, 0.0]
+            photometric = cfg.get("photometric_randomization", {})
+            light_state = None
+            if photometric.get("enabled", False):
+                from core.utils.appearance_randomization import sample_lighting
+                light_state = cfg.get("mem_light") if use_mem else None
+                light_state = light_state or sample_lighting(photometric)
+                intensity, rotation = light_state["intensity"], light_state["rotation_deg"]
+                envmap_id = int(light_state.get("envmap_id", envmap_id))
+                light_state["envmap_id"] = envmap_id
+                cfg["mem_light"] = light_state
             dome_prim_path = f"{self.root_prim_path}/DomeLight"
             envmap_hdr_path = envmap_hdr_path_list[envmap_id]
 
@@ -494,6 +617,12 @@ class BananaBaseTask(BaseTask):
                 self.dome_light_prim.GetOrderedXformOps()[0].Set((rotation[0], rotation[1], rotation[2]))
             self.dome_light_prim.GetIntensityAttr().Set(intensity)
             self.dome_light_prim.GetTextureFileAttr().Set(envmap_hdr_path)
+            if light_state is not None:
+                light_api = UsdLux.LightAPI(self.dome_light_prim.GetPrim())
+                light_api.CreateEnableColorTemperatureAttr().Set(True)
+                light_api.CreateColorTemperatureAttr().Set(light_state["temperature_kelvin"])
+                light_api.CreateColorAttr().Set(Gf.Vec3f(1, 1, 1))
+                print(f"Episode lighting: {light_state}", flush=True)
 
     def _set_fluid(self):
         # Particle params
@@ -619,29 +748,17 @@ class BananaBaseTask(BaseTask):
         return self.particles
 
     # Utilities
-    def _perturb_camera(self, camera, cfg, max_translation_noise=0.05, max_orientation_noise=10.0):
-        translation = np.array(cfg["translation"])
-        orientation = np.array(cfg["orientation"])
-
-        random_direction = np.random.randn(3)
-        random_direction /= np.linalg.norm(random_direction)
-        random_distance = np.random.uniform(0, max_translation_noise)
-        perturbed_translation = translation + random_direction * random_distance
-
-        original_rot = R.from_quat(orientation, scalar_first=True)
-        random_axis = np.random.randn(3)
-        random_axis /= np.linalg.norm(random_axis)
-        random_angle_deg = np.random.uniform(-max_orientation_noise, max_orientation_noise)
-        random_angle_rad = np.radians(random_angle_deg)
-        perturbation_rot = R.from_rotvec(random_axis * random_angle_rad)
-        perturbed_rot = perturbation_rot * original_rot
-        perturbed_orientation = perturbed_rot.as_quat(scalar_first=True)
-
+    def _perturb_camera(self, camera, cfg, max_translation_noise=0.05, max_orientation_noise=10.0, use_mem=False):
+        from core.utils.camera_utils import sample_camera_pose
+        state = cfg.get("mem_pose") if use_mem else None
+        state = state or sample_camera_pose(cfg, max_translation_noise, max_orientation_noise)
         camera.set_local_pose(
-            translation=perturbed_translation,
-            orientation=perturbed_orientation,
+            translation=state["translation"],
+            orientation=state["orientation_wxyz"],
             camera_axes=cfg["camera_axes"],
         )
+        cfg["mem_pose"] = state
+        print(f"Camera pose {cfg['name']}: {state}", flush=True)
 
     def _create_distractor_cfg(self):
         distractors_cfg = self.cfg["distractors"]

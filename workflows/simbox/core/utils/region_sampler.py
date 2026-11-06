@@ -39,6 +39,15 @@ class RandomRegionSampler:
         place_pos += shift
         # Orientation
         yaw = np.random.uniform(*yaw_rotation)
+        import os
+
+        if os.environ.get("INTERNDATA_DEBUG_PICK") == "1":
+            print(
+                f"[REGIONDBG] {getattr(obj, 'name', '?')}: "
+                f"tgt_center={np.round(tgt_center, 4)} tgt_z_max={tgt_z_max:.4f} "
+                f"shift={np.round(shift, 4)} place_pos={np.round(place_pos, 4)}",
+                flush=True,
+            )
         dr = R.from_euler("xyz", [0.0, 0.0, yaw], degrees=True)
         r = R.from_quat(obj.get_local_pose()[1], scalar_first=True)
         orientation = (dr * r).as_quat(scalar_first=True)

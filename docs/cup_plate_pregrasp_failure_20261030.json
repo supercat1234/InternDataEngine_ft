@@ -1,0 +1,247 @@
+[
+  {
+    "phase": "grasp",
+    "targets": 1152,
+    "solver_success_branches": 232,
+    "margin_rejected_branches": 64,
+    "valid_targets": 42,
+    "ee_xyz_min": [
+      0.3193790540832264,
+      -0.03319003096391687,
+      0.2666819720922067
+    ],
+    "ee_xyz_max": [
+      0.40186809935307133,
+      0.04929901442293688,
+      0.28350914213265377
+    ],
+    "min_position_error_mm": 0.00020187475410939293,
+    "near_pose_branches_1mm_1deg": 232,
+    "joints_near_limit_branches": [
+      0,
+      0,
+      0,
+      4,
+      4,
+      4
+    ],
+    "near_pose_limit_violations_per_joint": [
+      0,
+      0,
+      0,
+      0,
+      96,
+      0
+    ]
+  },
+  {
+    "phase": "pregrasp",
+    "targets": 126,
+    "solver_success_branches": 0,
+    "margin_rejected_branches": 0,
+    "valid_targets": 0,
+    "ee_xyz_min": [
+      0.3218761230128504,
+      -0.03104444162283973,
+      0.3066821349807292
+    ],
+    "ee_xyz_max": [
+      0.35033835818623227,
+      -0.0020531959045214563,
+      0.35168282524999106
+    ],
+    "min_position_error_mm": 2.8524065648307046,
+    "near_pose_branches_1mm_1deg": 0,
+    "joints_near_limit_branches": [
+      0,
+      0,
+      0,
+      4,
+      4,
+      4
+    ],
+    "near_pose_limit_violations_per_joint": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "phase": "probe_2",
+    "targets": 42,
+    "solver_success_branches": 128,
+    "margin_rejected_branches": 80,
+    "valid_targets": 12,
+    "ee_xyz_min": [
+      0.3218761279129878,
+      -0.03104444217623021,
+      0.2766821349807293
+    ],
+    "ee_xyz_max": [
+      0.35033836063630097,
+      -0.0020531970113024166,
+      0.2916828252499913
+    ],
+    "min_position_error_mm": 0.00028441445995754046,
+    "near_pose_branches_1mm_1deg": 128,
+    "joints_near_limit_branches": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0
+    ],
+    "near_pose_limit_violations_per_joint": [
+      0,
+      0,
+      0,
+      0,
+      112,
+      0
+    ]
+  },
+  {
+    "phase": "probe_3",
+    "targets": 42,
+    "solver_success_branches": 65,
+    "margin_rejected_branches": 57,
+    "valid_targets": 2,
+    "ee_xyz_min": [
+      0.321876127504643,
+      -0.031044442083998463,
+      0.2816821349807293
+    ],
+    "ee_xyz_max": [
+      0.35033836022795617,
+      -0.00205319691907067,
+      0.2966828252499913
+    ],
+    "min_position_error_mm": 0.0004101821542860876,
+    "near_pose_branches_1mm_1deg": 65,
+    "joints_near_limit_branches": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0
+    ],
+    "near_pose_limit_violations_per_joint": [
+      0,
+      0,
+      0,
+      0,
+      80,
+      0
+    ]
+  },
+  {
+    "phase": "probe_4",
+    "targets": 42,
+    "solver_success_branches": 16,
+    "margin_rejected_branches": 16,
+    "valid_targets": 0,
+    "ee_xyz_min": [
+      0.3218761270962982,
+      -0.031044441991766716,
+      0.28668213498072925
+    ],
+    "ee_xyz_max": [
+      0.35033835981961137,
+      -0.0020531968268389235,
+      0.30168282524999124
+    ],
+    "min_position_error_mm": 0.00040662746824442696,
+    "near_pose_branches_1mm_1deg": 16,
+    "joints_near_limit_branches": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0
+    ],
+    "near_pose_limit_violations_per_joint": [
+      0,
+      0,
+      0,
+      0,
+      40,
+      0
+    ]
+  },
+  {
+    "phase": "probe_5",
+    "targets": 42,
+    "solver_success_branches": 0,
+    "margin_rejected_branches": 0,
+    "valid_targets": 0,
+    "ee_xyz_min": [
+      0.32187612668795346,
+      -0.03104444189953497,
+      0.29168213498072926
+    ],
+    "ee_xyz_max": [
+      0.3503383594112666,
+      -0.0020531967346071765,
+      0.30668282524999124
+    ],
+    "min_position_error_mm": 1.8825811233792125,
+    "near_pose_branches_1mm_1deg": 0,
+    "joints_near_limit_branches": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0
+    ],
+    "near_pose_limit_violations_per_joint": [
+      0,
+      0,
+      0,
+      0,
+      8,
+      0
+    ]
+  },
+  {
+    "phase": "probe_6",
+    "targets": 42,
+    "solver_success_branches": 0,
+    "margin_rejected_branches": 0,
+    "valid_targets": 0,
+    "ee_xyz_min": [
+      0.32187612627960865,
+      -0.031044441807303223,
+      0.29668213498072926
+    ],
+    "ee_xyz_max": [
+      0.3503383590029218,
+      -0.00205319664237543,
+      0.31168282524999125
+    ],
+    "min_position_error_mm": 4.082644068571386,
+    "near_pose_branches_1mm_1deg": 0,
+    "joints_near_limit_branches": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      1
+    ],
+    "near_pose_limit_violations_per_joint": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+]

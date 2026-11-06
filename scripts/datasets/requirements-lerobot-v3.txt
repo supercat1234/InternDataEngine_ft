@@ -1,0 +1,5 @@
+# Validated with Python 3.12. Keep separate from the Isaac Sim Python environment.
+lerobot==0.5.1
+lmdb>=1.6
+opencv-python-headless>=4.8
+scipy>=1.12

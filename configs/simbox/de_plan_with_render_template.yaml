@@ -16,6 +16,7 @@ load_stage:
     args:
       random_num: 6                        # Number of random samples per task
       strict_mode: true                    # true: output count must equal random_num
+      max_retries: -1                      # strict: extra retries per target; -1=unlimited, 0=no retries
 plan_with_render_stage:
   plan_with_render:                        # Plan and render in a single stage
     type: plan_with_render

@@ -1,4 +1,6 @@
 """SplitAloha robot implementation - Dual-arm manipulator."""
+import numpy as np
+
 from core.robots.base_robot import register_robot
 from core.robots.template_robot import TemplateRobot
 
@@ -56,3 +58,25 @@ class SplitAloha(TemplateRobot):
         )
         if positions and indices:
             self._articulation_view.set_joint_positions(positions, joint_indices=indices)
+            self._articulation_view.set_joint_position_targets(positions, joint_indices=indices)
+        # Optional named joints avoid relying on a drive moving to its target during warmup.
+        initial = getattr(self, "_episode_initial_joint_positions", self.cfg.get("initial_joint_positions", {}))
+        if initial:
+            extra_indices = [self.get_dof_index(name) for name in initial]
+            values = list(initial.values())
+            self._articulation_view.set_joint_positions(values, joint_indices=extra_indices)
+            self._articulation_view.set_joint_position_targets(values, joint_indices=extra_indices)
+        height_cfg = getattr(self, "_episode_base_height_cfg", None)
+        if height_cfg:
+            lift_index = self.get_dof_index(height_cfg["joint_name"])
+            if not hasattr(self, "_base_height_original_gains"):
+                kp, kd = self._articulation_view.get_gains(joint_indices=[lift_index])
+                self._base_height_original_gains = (lift_index, kp.copy(), kd.copy())
+            # Apply to the live physics view after EACH initialize/reset; changing
+            # USD drive attributes alone can be overwritten by cached defaults.
+            self._articulation_view.set_gains(
+                kps=np.array([[height_cfg["drive_stiffness"]]], dtype=np.float32),
+                kds=np.array([[height_cfg["drive_damping"]]], dtype=np.float32), joint_indices=[lift_index])
+        elif hasattr(self, "_base_height_original_gains"):
+            index, kp, kd = self._base_height_original_gains
+            self._articulation_view.set_gains(kps=kp, kds=kd, joint_indices=[index])

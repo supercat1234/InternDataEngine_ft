@@ -29,6 +29,7 @@ from .simbox.core.loggers.utils import log_dual_obs
 from .simbox.core.skills import get_skill_cls
 from .simbox.core.tasks import get_task_cls
 from .simbox.core.utils.collision_utils import filter_collisions
+from .simbox.core.utils.playback import PlaybackGate
 from .simbox.core.utils.utils import set_random_seed
 
 
@@ -41,10 +42,12 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
         task_cfg_path: str,
         scene_info: str = "dining_room_scene_info",
         random_seed: int = None,
+        preview_only: bool = False,
     ):
         self.scene_info = scene_info
         self.step_replay = False
         self.random_seed = random_seed
+        self.preview_only = preview_only
         super().__init__(world, task_cfg_path)
 
     def parse_task_cfgs(self, task_cfg_path: str) -> list:
@@ -154,12 +157,16 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
         )
         self.world.reset()
         self.world.step(render=True)
-        self.controllers = self._initialize_controllers(self.task, self.task_cfg, self.world)
-        self.skills = self._initialize_skills(self.task, self.task_cfg, self.controllers, self.world)
+        if not self.preview_only:
+            self.controllers = self._initialize_controllers(self.task, self.task_cfg, self.world)
+            self.skills = self._initialize_skills(self.task, self.task_cfg, self.controllers, self.world)
 
         for _ in range(50):
             self._init_static_objects(self.task)
             self.world.step(render=False)
+
+        if self.preview_only:
+            return
 
         self.logger = LmdbLogger(
             task_dir=self.task_cfg["data"]["task_dir"],
@@ -279,13 +286,21 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
             except Exception:
                 pass
 
-    def _randomization_layout_mem(self):
-        # Reset world
-        self.world.reset()
-
-        # Individual initialize
-        self.task.individual_randomize_from_mem()
+    def _reset_layout_world(self, use_mem=False):
+        randomize = self.task.individual_randomize_from_mem if use_mem else self.task.individual_randomize
+        if getattr(self.task, "_height_randomized_fixtures", None):
+            # Rebuild resized static colliders and start objects above the NEW
+            # surface. Resetting first can kick objects out of a raised tabletop.
+            self.world.stop()
+            randomize()
+            self.world.reset()
+        else:
+            self.world.reset()
+            randomize()
         self.task.post_reset()
+
+    def _randomization_layout_mem(self):
+        self._reset_layout_world(use_mem=True)
 
         self.world.step(render=False)
 
@@ -312,12 +327,7 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
         # episode_stats["current_times"] += 1
 
     def _randomization_layout(self):
-        # Reset world
-        self.world.reset()
-
-        # Individual initialize
-        self.task.individual_randomize()
-        self.task.post_reset()
+        self._reset_layout_world()
 
         self.world.step(render=False)
 
@@ -541,12 +551,12 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
                         robot_name, "images.rgb." + save_camera_name, rgb_img, step_idx=step_idx
                     )
                     if "depth_image" in camera_obs:
-                        depth_image = camera_obs["depth_image"]
-                        depth_img = np.nan_to_num(depth_img, nan=0.0, posinf=0.0, neginf=0.0)
+                        depth_img = np.nan_to_num(camera_obs["depth_image"], nan=0.0, posinf=0.0, neginf=0.0)
                         self.logger.add_depth_image(
                             robot_name, "images.depth." + save_camera_name, depth_img, step_idx=step_idx
                         )
                     if "semantic_mask" in camera_obs:
+                        seg_mask = camera_obs["semantic_mask"]
                         self.logger.add_seg_image(
                             robot_name, "images.seg." + save_camera_name, seg_mask, step_idx=step_idx
                         )
@@ -657,12 +667,46 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
     def save(self, save_path: str) -> int:
         os.makedirs(save_path, exist_ok=True)
         timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S_%f")
+        randomization = {}
+        if self.task_cfg.get("shared_region_sampling", {}).get("enabled", False) and self.task_cfg.get("mem_shared_layout"):
+            randomization["layout"] = deepcopy(self.task_cfg["mem_shared_layout"])
+        if self.task_cfg.get("env_map", {}).get("mem_light"):
+            randomization["lighting"] = deepcopy(self.task_cfg["env_map"]["mem_light"])
+        fixtures = {cfg["name"]: deepcopy(cfg["appearance_randomization"]["mem_appearance"])
+                    for cfg in self.task_cfg.get("arena", {}).get("fixtures", [])
+                    if cfg.get("appearance_randomization", {}).get("mem_appearance")}
+        for cfg in self.task_cfg.get("arena", {}).get("fixtures", []):
+            if cfg.get("texture", {}).get("mem_texture"):
+                fixtures[cfg["name"]] = deepcopy(cfg["texture"]["mem_texture"])
+        if fixtures:
+            randomization["fixtures"] = fixtures
+        fixture_geometry = {cfg["name"]: deepcopy(cfg["height_randomization"]["mem_height"])
+                            for cfg in self.task_cfg.get("arena", {}).get("fixtures", [])
+                            if cfg.get("height_randomization", {}).get("mem_height")}
+        if fixture_geometry:
+            randomization["fixture_geometry"] = fixture_geometry
+        robot_heights = {cfg["name"]: deepcopy(cfg["base_height_randomization"]["mem_height"])
+                         for cfg in self.task_cfg.get("robots", [])
+                         if cfg.get("base_height_randomization", {}).get("mem_height")}
+        if robot_heights:
+            randomization["robot_base_height"] = robot_heights
+        cameras = {cfg["name"]: deepcopy(cfg["mem_pose"])
+                   for cfg in self.task_cfg.get("cameras", []) if cfg.get("mem_pose")}
+        if cameras:
+            randomization["cameras"] = cameras
+        if self.task_cfg.get("mem_grasp_selection"):
+            randomization["grasp"] = deepcopy(self.task_cfg["mem_grasp_selection"])
+        if randomization:
+            for robot_name in self.logger.proprio_data_logger:
+                self.logger.add_json_data(robot_name, "episode_randomization", randomization)
         self.logger.save(save_path, timestamp, save_img=True)
 
         return self.length
 
     def plan_with_render(self):
         end = False
+        self.length = 0
+        playback = PlaybackGate(self.world)
 
         step_id = 0
         length = 0
@@ -671,20 +715,19 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
         max_episode_length = self.task_cfg["data"]["max_episode_length"]
         episode_stats = {"succeed_times": 0, "current_times": 0}
 
+        if not playback.wait():
+            return 0
         should_continue = self.plan_first_skill(self.skills, should_continue)
 
-        # Warmup
+        # Warmup counts physics frames, never paused UI refreshes.
         for _ in range(10):
             obs = self.world.get_observations()
-            # self._init_static_objects(self.task)
-            self.world.step(render=True)
-
-        # while True:
-        #     obs = self.world.get_observations()
-        #     # self._init_static_objects(self.task)
-        #     self.world.step(render=True)
+            if not playback.step():
+                return 0
 
         while not (step_id >= max_episode_length or (not self.skills and not episode_success) or (not should_continue)):
+            if not playback.wait():
+                return 0
             obs = self.world.get_observations()
             action_dict = {}
             record_flag = True
@@ -716,8 +759,9 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
             elif not self.skills and episode_success:
                 print("Task is successful")
                 end = True
-                for j_idx in range(1, 7):
-                    self.world.step(render=True)
+                for j_idx in range(6):
+                    if not playback.step():
+                        return 0
                     obs = self.world.get_observations()
                     log_dual_obs(self.logger, obs, action_dict, self.controllers, step_idx=step_id + j_idx)
                     self._record_rgb_depth(step_id + j_idx)
@@ -725,12 +769,14 @@ class SimBoxDualWorkFlow(NimbusWorkFlow):
                 length = step_id + 6
                 episode_stats["succeed_times"] += 1
                 should_continue = False
+                break
 
             if record_flag:
                 log_dual_obs(self.logger, obs, action_dict, self.controllers, step_idx=step_id)
                 self._record_rgb_depth(step_id)
             self.task.apply_action(action_dict)
-            self.world.step(render=True)
+            if not playback.step():
+                return 0
 
             step_id += 1
             if self.skills:

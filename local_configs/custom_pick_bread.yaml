@@ -1,0 +1,151 @@
+# =============================================================
+# 自定义场景 / 自定义任务模板
+# 机器人：Split ALOHA（本机已有资产）
+# 场景：custom_home_arena（桌面 + 地面 + 背景墙，纹理随机）
+# 任务：左臂抓取面包并抬起回位（最小可跑单元，先验证场景对不对）
+#
+# 运行：
+#   bash scripts/run_custom_scene.sh 1 --load_stage.scene_loader.args.simulator.headless=false
+# =============================================================
+tasks:
+  -
+    name: banana_base_task        # 任务实例名（输出目录会带这个名字）
+    asset_root: workflows/simbox/assets   # ★ 所有 USD 路径的相对根，换资产库就改这里
+    task: BananaBaseTask          # ★ 任务类，全仓库通用，基本不用改
+    task_id: 0
+
+    offset: null
+    render: True
+
+    # ★ 空列表 = 桌面参与真实的 PhysX 碰撞（机器人不能穿桌子）。
+    #   写 ["table"] 会把桌子拉进"互不碰撞组"，机器人手臂就能穿过桌面——数据会失真。
+    #   ！注意：这个字段只管 PhysX 物理碰撞组，不管 CuRobo 规划世界；
+    #   桌子一直都在 CuRobo 的碰撞世界里（日志里的 "warp cache ... table" 就是它）。
+    neglect_collision_names: []
+    arena_file: workflows/simbox/core/configs/arenas/custom_home_arena.yaml   # ★ 场景定义
+
+    env_map:
+      envmap_lib: envmap_lib
+      apply_randomization: True
+      intensity_range: [4000, 7000]
+      rotation_range: [0, 180]
+
+    # ---------------- 机器人 ----------------
+    robots:
+      -
+        name: "split_aloha"                                  # 名字要能被 skills 段引用
+        robot_config_file: workflows/simbox/core/configs/robots/split_aloha.yaml
+        euler: [0.0, 0.0, 90.0]                              # 机器人朝向（让它面对桌子）
+        left_joint_home:  [0.00484993, 0.34198609, -0.14007858, 0.01680429, 0.14391101, -0.00252178]
+        right_joint_home: [0.00484993, 0.34198609, -0.14007858, 0.01680429, 0.14391101, -0.00252178]
+        left_joint_home_std:  [0.12513939, 0.24539099, 0.24468172, 0.23398885, 0.2710117, 0.21726329]
+        right_joint_home_std: [0.12513939, 0.24539099, 0.24468172, 0.23398885, 0.2710117, 0.21726329]
+        ignore_substring: ["material"]
+
+    # ---------------- 物体 ----------------
+    # path 相对 asset_root；target_class 决定用哪个加载器
+    # RigidObject=可抓刚体 / ArticulatedObject=铰接(微波炉、抽屉) / GeometryObject=静态几何(桌子、房间) / PlaneObject=平面
+    objects:
+      -
+        name: pick_0
+        path: art/heat_the_food_in_the_microwave/pick_objs/omniobject3d-bread_090/Aligned_obj.usd
+        target_class: RigidObject
+        dataset: oo3d
+        category: bread                # 写进语言指令
+        prim_path_child: Aligned       # ★ USD 内实际承载刚体/碰撞的 prim 名，抓取失败通常是这里错
+        translation: [0.0, 0.0, 0.0]
+        euler: [0.0, 0.0, 0.0]
+        scale: [0.001, 0.001, 0.001]   # ★ USD 网格是毫米制，必须 0.001（抓取 npy 才是米制，别混）
+        apply_randomization: True      # True = 每次从同类别中随机换一个模型
+        orientation_mode: keep         # keep / random / suggested
+        optimize_2d_layout: False
+
+    # ---------------- 摆放区域 ----------------
+    # 坐标系：以 target（这里 table）为原点；z 是相对桌面高度
+    regions:
+      -
+        object: pick_0
+        target: table
+        random_type: A_on_B_region_sampler     # 在 B 表面的一块矩形里撒 A
+        random_config:
+          # ★ 实测可达带 0.30~0.44 m（不是 0.55）：5 次采样里 0.474 斜向能成、0.471 前向全灭，
+          #   说明 y（前向）方向最费行程。此区域四角距离 0.295 / 0.394 / 0.346 / 0.433，全在带内。
+          #   距离公式 d = sqrt((y+0.4915)^2 + (x+0.306)^2)，左臂基座在 (-0.306, -0.4915)。
+          pos_range: [
+            [-0.26, -0.20, 0.0],
+            [-0.12, -0.10, 0.0]
+          ]
+          yaw_rotation: [-180.0, 180.0]
+      -
+        object: split_aloha
+        target: table
+        random_type: A_on_B_region_sampler
+        random_config:
+          pos_range: [
+            [0.0, -0.86, -0.765],
+            [0.0, -0.86, -0.765]
+          ]
+          yaw_rotation: [0.0, 0.0]
+
+    # ---------------- 相机 ----------------
+    # parent 必须是 USD 里真实存在的 prim 路径，写错会直接报错
+    cameras:
+      -
+        name: split_aloha_hand_left
+        translation: [0.0, 0.08, 0.05]
+        orientation: [0.0, 0.0, 0.965, 0.259]
+        camera_axes: usd
+        camera_file: workflows/simbox/core/configs/cameras/astra.yaml
+        parent: "split_aloha/split_aloha_mid_360_with_piper/split_aloha_mid_360_with_piper/fl/link6"
+        apply_randomization: False
+      -
+        name: split_aloha_hand_right
+        translation: [0.0, 0.08, 0.04]
+        orientation: [0.0, 0.0, 0.972, 0.233]
+        camera_axes: usd
+        camera_file: workflows/simbox/core/configs/cameras/astra.yaml
+        parent: "split_aloha/split_aloha_mid_360_with_piper/split_aloha_mid_360_with_piper/fr/link6"
+        apply_randomization: False
+      -
+        name: split_aloha_head
+        translation: [0.0, -0.00818, 0.1]
+        orientation: [0.658, 0.259, -0.282, -0.648]
+        camera_axes: usd
+        camera_file: workflows/simbox/core/configs/cameras/realsense_d455_v3.yaml
+        parent: "split_aloha/split_aloha_mid_360_with_piper/split_aloha_mid_360_with_piper/top_camera_link"
+        apply_randomization: False
+
+    # ---------------- 数据与语言指令 ----------------
+    data:
+      task_dir: "custom/pick_bread"
+      language_instruction: "Pick up the bread with the left arm."
+      detailed_language_instruction: "Left arm approaches the bread on the table, grasps it and lifts it about 10 cm."
+      collect_info: ""
+      version: "v0.1 custom scene, 1280x720 head + 640x480 wrist"
+      update: True
+      max_episode_length: 800
+
+    # ---------------- 技能序列 ----------------
+    # 一个列表元素 = 一个时间步，双臂并行；每个臂下是顺序执行的技能
+    skills:
+      -
+        split_aloha:
+          -
+            left:
+              -
+                name: pick
+                objects: [pick_0]
+                filter_y_dir: ["forward", 60]
+                filter_z_dir: ["downward", 150]
+                pre_grasp_offset: 0.05
+                gripper_change_steps: 10
+                t_eps: 0.025
+                o_eps: 1
+                process_valid: True
+                lift_th: 0.02
+                post_grasp_offset_min: 0.10
+                post_grasp_offset_max: 0.15
+              -
+                name: heuristic__skill
+                mode: home
+                gripper_state: 1.0    # 1.0 张开

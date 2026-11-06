@@ -1,0 +1,22 @@
+# OOD relative to the configured ID task; coordinates are meters in task frame.
+# Table footprint: x [-0.7,0.7], y [-0.3,0.3], surface z=0.75.
+positions:
+  paper_cup: [[-0.20, -0.10, 0.0], [-0.05, 0.00, 0.0]]
+  ceramic_plate: [[-0.30, -0.20, 0.0], [-0.20, -0.05, 0.0]]
+object_colors:
+  paper_cup:
+    - {name: blue, rgb: [0.18, 0.45, 0.90]}
+    - {name: green, rgb: [0.22, 0.72, 0.28]}
+    - {name: magenta, rgb: [0.82, 0.25, 0.62]}
+  ceramic_plate:
+    - {name: blue, rgb: [0.18, 0.40, 0.85]}
+    - {name: orange, rgb: [0.90, 0.42, 0.12]}
+    - {name: green, rgb: [0.24, 0.65, 0.30]}
+table_textures:
+  - {name: ood_walnut_grain, file: local_configs/cup_plate_pi05_ood/textures/walnut_grain.png}
+  - {name: ood_gray_woven, file: local_configs/cup_plate_pi05_ood/textures/gray_woven.png}
+  - {name: ood_terrazzo, file: local_configs/cup_plate_pi05_ood/textures/terrazzo.png}
+floor_colors:
+  - {name: ood_blue, file: local_configs/cup_plate_pi05_ood/textures/floor_blue.png}
+  - {name: ood_green, file: local_configs/cup_plate_pi05_ood/textures/floor_green.png}
+  - {name: ood_terracotta, file: local_configs/cup_plate_pi05_ood/textures/floor_terracotta.png}

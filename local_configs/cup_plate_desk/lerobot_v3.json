@@ -1,0 +1,14 @@
+{
+  "arm": "left",
+  "fps": 30,
+  "cameras": ["external", "hand_left", "hand_right"],
+  "urdf": "workflows/simbox/curobo/src/curobo/content/assets/robot/piper100/piper100.urdf",
+  "base_link": "arm_base",
+  "ee_link": "link6",
+  "joint_names": ["joint1", "joint2", "joint3", "joint4", "joint5", "joint6"],
+  "T_link6_tcp": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.12], [0, 0, 0, 1]],
+  "tcp_calibration_status": "simulation_definition_only_not_real_robot_calibrated",
+  "gripper_max_width_m": 0.1,
+  "max_fk_position_error_m": 0.003,
+  "max_fk_rotation_error_rad": 0.005
+}
